@@ -423,25 +423,65 @@ let setswordairattackdown = (player, sword) =>{
 
 let setswordjumping = (player, sword) =>{
 	
-	sword.x = player.x - player.width/4;
-	sword.y = player.y;
 	sword.body.velocity.y = 0;
 	
+	let swordinhandy = player.y - 7;
+	let swordinhandx = player.x - player.width/4;
+	let perf = 5;
+	
+	switch(player.scale.x){
+		case -playerscalew:
+					sword.angle = 45;
+					sword.x = swordinhandx + perf;
+					sword.y = swordinhandy;
+			break;
+		default: 
+					sword.angle = -45;
+					sword.x = swordinhandx - perf;
+					sword.y = swordinhandy;
+	}
 }
 
 let setswordfalling = (player, sword) =>{
 	
-	sword.x = player.x - player.width/4;
-	sword.y = player.y;
 	sword.body.velocity.y = 0;
 	
+	let swordinhandy = player.y - 7;
+	let swordinhandx = player.x - player.width/4;
+	let perf = 5;
+	
+	switch(player.scale.x){
+		case -playerscalew:
+					sword.angle = 45;
+					sword.x = swordinhandx + perf;
+					sword.y = swordinhandy;
+			break;
+		default: 
+					sword.angle = -45;
+					sword.x = swordinhandx - perf;
+					sword.y = swordinhandy;
+	}
 }
 
 let setswordducking = (player, sword) =>{
 	
-	sword.x = player.x - player.width/4;
-	sword.y = player.y;
 	sword.body.velocity.y = 0;
+	
+	let swordinhandy = player.y + player.height/2 - 7;
+	let swordinhandx = player.x - player.width/4;
+	let perf = 4;
+	
+	switch(player.scale.x){
+		case -playerscalew:
+					sword.angle = 45;
+					sword.x = swordinhandx + perf;
+					sword.y = swordinhandy;
+			break;
+		default: 
+					sword.angle = -45;
+					sword.x = swordinhandx - perf;
+					sword.y = swordinhandy;
+	}
 	
 }
 
