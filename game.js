@@ -1,6 +1,6 @@
 //initialize shit
 
-//fullgame size not just camera screen
+//camera size (fullscreen = *3)
 const	gamewidth = 720,
 		gameheight = 480,
 
@@ -153,12 +153,6 @@ function update() {
 		addweapontoplayer(player1, player2);
 		addweapontoplayer(player2, player1);
 		
-		shield1.body.velocity.x = 0;
-		shield2.body.velocity.x = 0;
-		
-		sword1.body.velocity.x = 0;
-		sword2.body.velocity.x = 0;
-		
 		//collide the player with the platforms
 		keepplayerupdated(player1, player2, hitPlayer);
 		keepplayerupdated(player2, player1, hitPlayer);
@@ -168,20 +162,50 @@ function update() {
 		
 		updateweaponposition(player1);
 		updateweaponposition(player2);
+		
+		removecollisionifinhand(sword1);
+		removecollisionifinhand(sword2);
+		removecollisionifinhand(shield1);
+		removecollisionifinhand(shield2);
 	
 	text.setText("FPS: " +game.time.fps);
 
 }
 
+let removecollisionifinhand = (handobject) =>{
+	
+	if(handobject.onplayer === player1 || handobject.onplayer === player2){
+		handobject.body.checkCollision.none = true;
+		handobject.body.allowGravity = false;
+	}
+	
+	if(handobject.body.allowGravity === true){
+		handobject.body.velocity.x = 0;
+	}
+	
+}
+
 let addweapontoplayer = (player, otherplayer) =>{
 	
 	//var hitWeapon = game.physics.arcade.collide(player, weapons);
-
-	var hitsword1 = game.physics.arcade.collide(player, sword1);
-	var hitsword2 = game.physics.arcade.collide(player, sword2);
 	
-	var hitshield1 = game.physics.arcade.collide(player, shield1);
-	var hitshield2 = game.physics.arcade.collide(player, shield2);
+	var hitsword1 = false;
+	var hitsword2 = false;
+	var hitshield1 = false;
+	var hitshield2 = false;
+	
+	if (shield1.onplayer !== player){
+		hitsword1 = game.physics.arcade.collide(player, sword1);
+	}
+	if (shield1.onplayer !== player){
+		hitsword2 = game.physics.arcade.collide(player, sword2);
+	}
+	if (shield1.onplayer !== player){
+		hitshield1 = game.physics.arcade.collide(player, shield1);
+	}
+	if (shield1.onplayer !== player){
+		hitshield2 = game.physics.arcade.collide(player, shield2);
+	}
 	
 	if (player.sword === 0){
 	
@@ -385,45 +409,38 @@ let setswordwalk = (player, sword) =>{
 	
 	sword.x = player.x - player.width/4;
 	sword.y = player.y;
-	sword.body.velocity.y = 0;
-	
+	sword.angle = 0;
 }
 
 let setswordidle = (player, sword) =>{
 	
 	sword.x = player.x - player.width/4;
 	sword.y = player.y;
-	sword.body.velocity.y = 0;
-	
+	sword.angle = 0;
 }
 
 let setswordnormalattack = (player, sword) =>{
 	
 	sword.x = player.x - player.width/4;
 	sword.y = player.y;
-	sword.body.velocity.y = 0;
-	
+	sword.angle = 0;
 }
 
 let setswordexhaustedidle = (player, sword) =>{
 	
 	sword.x = player.x - player.width/4;
 	sword.y = player.y;
-	sword.body.velocity.y = 0;
-	
+	sword.angle = 0;
 }
 
 let setswordairattackdown = (player, sword) =>{
 	
 	sword.x = player.x - player.width/4;
 	sword.y = player.y;
-	sword.body.velocity.y = 0;
-	
+	sword.angle = 0;
 }
 
 let setswordjumping = (player, sword) =>{
-	
-	sword.body.velocity.y = 0;
 	
 	let swordinhandy = player.y - 7;
 	let swordinhandx = player.x - player.width/4;
@@ -444,8 +461,6 @@ let setswordjumping = (player, sword) =>{
 
 let setswordfalling = (player, sword) =>{
 	
-	sword.body.velocity.y = 0;
-	
 	let swordinhandy = player.y - 7;
 	let swordinhandx = player.x - player.width/4;
 	let perf = 5;
@@ -464,8 +479,6 @@ let setswordfalling = (player, sword) =>{
 }
 
 let setswordducking = (player, sword) =>{
-	
-	sword.body.velocity.y = 0;
 	
 	let swordinhandy = player.y + player.height/2 - 7;
 	let swordinhandx = player.x - player.width/4;
@@ -551,7 +564,7 @@ let setswordposition = (player, sword) =>{
 			break;
 		default: 				sword.x = player.x - player.width/4;
 								sword.y = player.y;
-								sword.body.velocity.y = 0;
+								sword.angle = 0;
 	}
 	
 }
@@ -579,7 +592,6 @@ let setshieldposition = (player, shield) =>{
 			break;
 		default: 				shield.x = player.x - player.width/4;
 								shield.y = player.y;
-								shield.body.velocity.y = 0;
 	}
 	
 }
