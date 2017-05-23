@@ -189,23 +189,10 @@ let addweapontoplayer = (player, otherplayer) =>{
 	
 	//var hitWeapon = game.physics.arcade.collide(player, weapons);
 	
-	var hitsword1 = false;
-	var hitsword2 = false;
-	var hitshield1 = false;
-	var hitshield2 = false;
-	
-	if (shield1.onplayer !== player){
-		hitsword1 = game.physics.arcade.collide(player, sword1);
-	}
-	if (shield1.onplayer !== player){
-		hitsword2 = game.physics.arcade.collide(player, sword2);
-	}
-	if (shield1.onplayer !== player){
-		hitshield1 = game.physics.arcade.collide(player, shield1);
-	}
-	if (shield1.onplayer !== player){
-		hitshield2 = game.physics.arcade.collide(player, shield2);
-	}
+	var hitsword1 = game.physics.arcade.collide(player, sword1);
+	var hitsword2 = game.physics.arcade.collide(player, sword2);	
+	var hitshield1 = game.physics.arcade.collide(player, shield1);
+	var hitshield2 = game.physics.arcade.collide(player, shield2);
 	
 	if (player.sword === 0){
 	
