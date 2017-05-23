@@ -401,9 +401,43 @@ let setswordwalk = (player, sword) =>{
 
 let setswordidle = (player, sword) =>{
 	
-	sword.x = player.x - player.width/4;
-	sword.y = player.y;
-	sword.angle = 0;
+	let swordinhandy; 
+	let swordinhandx = player.x - player.width/4;
+	let perf = 3;
+	
+	switch(player.frame){
+		
+	case 1:	swordinhandy = player.y - 5;
+			switch(player.scale.x){
+			case -playerscalew:
+						sword.angle = 30;
+						sword.x = swordinhandx + perf;
+						sword.y = swordinhandy;
+				break;
+			default: 
+						sword.angle = -30;
+						sword.x = swordinhandx - perf;
+						sword.y = swordinhandy;
+			}
+		break;
+		
+	case 2: swordinhandy = player.y - 4;
+			switch(player.scale.x){
+			case -playerscalew:
+						sword.angle = 30;
+						sword.x = swordinhandx + perf;
+						sword.y = swordinhandy;
+				break;
+			default: 
+						sword.angle = -30;
+						sword.x = swordinhandx - perf;
+						sword.y = swordinhandy;
+			}
+		break;
+		
+	default:
+	}
+	
 }
 
 let setswordnormalattack = (player, sword) =>{
