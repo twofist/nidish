@@ -1,6 +1,6 @@
 //initialize shit
 
-//camera size (fullscreen = *3)
+//camera size (gamesize = *3)
 const	gamewidth = 720,
 		gameheight = 480,
 
