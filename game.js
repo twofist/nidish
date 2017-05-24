@@ -174,13 +174,18 @@ function update() {
 
 let removecollisionifinhand = (handobject) =>{
 	
+	handobjgrav = handobject.body.allowGravity;
+	
 	if(handobject.onplayer === player1 || handobject.onplayer === player2){
 		handobject.body.checkCollision.none = true;
-		handobject.body.allowGravity = false;
+		handobjgrav = false;
 	}
 	
-	if(handobject.body.allowGravity === true){
+	if(handobjgrav === true){
 		handobject.body.velocity.x = 0;
+	}else{
+		handobject.body.velocity.x = 0;
+		handobject.body.velocity.y = 0;
 	}
 	
 }
@@ -394,9 +399,22 @@ let player2movement = (player, hitPlatform, hitPlayer, otherplayer) =>{
 
 let setswordwalk = (player, sword) =>{
 	
-	sword.x = player.x - player.width/4;
-	sword.y = player.y;
-	sword.angle = 0;
+	let swordinhandy = player.y - 3;
+	let swordinhandx = player.x - player.width/4;
+	let perf = 8;
+	
+	switch(player.scale.x){
+		case -playerscalew:
+				sword.angle = 30;
+				sword.x = swordinhandx + perf;
+				sword.y = swordinhandy;
+			break;
+		default: 
+				sword.angle = -30;
+				sword.x = swordinhandx - perf;
+				sword.y = swordinhandy;
+	}
+	
 }
 
 let setswordidle = (player, sword) =>{
@@ -440,6 +458,48 @@ let setswordidle = (player, sword) =>{
 	
 }
 
+let setswordexhaustedidle = (player, sword) =>{
+	
+	let swordinhandy; 
+	let swordinhandx = player.x - player.width/4;
+	let perf = 5;
+	
+	switch(player.frame){
+		
+	case 3:	swordinhandy = player.y - 1;
+			switch(player.scale.x){
+			case -playerscalew:
+						sword.angle = 30;
+						sword.x = swordinhandx + perf;
+						sword.y = swordinhandy;
+				break;
+			default: 
+						sword.angle = -30;
+						sword.x = swordinhandx - perf;
+						sword.y = swordinhandy;
+			}
+		break;
+		
+	case 4: swordinhandy = player.y - 0;
+			switch(player.scale.x){
+			case -playerscalew:
+						sword.angle = 30;
+						sword.x = swordinhandx + perf;
+						sword.y = swordinhandy;
+				break;
+			default: 
+						sword.angle = -30;
+						sword.x = swordinhandx - perf;
+						sword.y = swordinhandy;
+			}
+		break;
+		
+	default:
+	}
+	
+}
+
+//do
 let setswordnormalattack = (player, sword) =>{
 	
 	sword.x = player.x - player.width/4;
@@ -447,13 +507,7 @@ let setswordnormalattack = (player, sword) =>{
 	sword.angle = 0;
 }
 
-let setswordexhaustedidle = (player, sword) =>{
-	
-	sword.x = player.x - player.width/4;
-	sword.y = player.y;
-	sword.angle = 0;
-}
-
+//do
 let setswordairattackdown = (player, sword) =>{
 	
 	sword.x = player.x - player.width/4;
