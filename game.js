@@ -172,82 +172,7 @@ function update() {
 
 }
 
-let removecollisionifinhand = (handobject) =>{
-	
-	handobjgrav = handobject.body.allowGravity;
-	
-	if(handobject.onplayer === player1 || handobject.onplayer === player2){
-		handobject.body.checkCollision.none = true;
-		handobjgrav = false;
-	}
-	
-	if(handobjgrav === true){
-		handobject.body.velocity.x = 0;
-	}else{
-		handobject.body.velocity.x = 0;
-		handobject.body.velocity.y = 0;
-	}
-	
-}
 
-let addweapontoplayer = (player, otherplayer) =>{
-	
-	//var hitWeapon = game.physics.arcade.collide(player, weapons);
-	
-	var hitsword1 = game.physics.arcade.collide(player, sword1);
-	var hitsword2 = game.physics.arcade.collide(player, sword2);	
-	var hitshield1 = game.physics.arcade.collide(player, shield1);
-	var hitshield2 = game.physics.arcade.collide(player, shield2);
-	
-	if (player.sword === 0){
-	
-		if(hitsword1 && otherplayer.sword !== 1){
-			player.sword = 1;
-			sword1.onplayer = player;
-		}
-		
-		if(hitsword2 && otherplayer.sword !== 2){
-			player.sword = 2;
-			sword2.onplayer = player;
-		}	
-		
-	}
-	
-	if(player.shield === 0){
-		
-		if(hitshield1 && otherplayer.shield !== 1){
-			player.shield = 1;
-			shield1.onplayer = player;
-		}
-		
-		if(hitshield2 && otherplayer.shield !== 2){
-			player.shield = 2;
-			shield2.onplayer = player;
-		}
-		
-	}
-	
-}
-
-let updateweaponposition = (player) =>{
-	
-	switch(player.sword){
-		case 1:		setswordposition(player, sword1);
-			break;
-		case 2:		setswordposition(player, sword2);
-			break;
-		default:
-	}
-	
-	switch(player.shield){
-		case 1:		setshieldposition(player, shield1);
-			break;
-		case 2:		setshieldposition(player, shield2);
-			break;
-		default:
-	}
-	
-}
 
 let keepplayerupdated = (player, otherplayer, hitPlayer) =>{
 	
@@ -397,6 +322,187 @@ let player2movement = (player, hitPlatform, hitPlayer, otherplayer) =>{
 	
 }
 
+let playerstates = (player) => {
+	//handles current player states attacking walking etc
+
+	switch (player.curstate){
+		case walking:			player.animations.play('left');
+			break;
+		case idle:				player.animations.play('idle');
+			break;
+		case normalattack:		player.animations.play('normalattack');
+			break;
+		case blocking:			player.animations.play('blocking');
+			break;
+		case exhaustedidle: 	player.animations.play('exhaustedidle');
+			break;
+		case airattackdown:		player.animations.play('airattackdown');
+								player.body.setSize(spritesizew/Math.abs(player.scale.x), (spritesizeh/Math.abs(player.scale.y))/2, 0, player.height/2);
+			break;
+		case jumping:			player.animations.stop();
+								player.frame = 8
+			break;
+		case falling:			player.animations.stop();
+								player.frame = 9
+			break;
+		case ducking:			player.animations.stop();
+								player.body.setSize(spritesizew/Math.abs(player.scale.x), (spritesizeh/Math.abs(player.scale.y))/2, 0, player.height/2);
+								player.frame = 20;
+			break;
+		default: 				player.animations.stop();
+								player.frame = 0;
+	}
+	
+	switch (player.curstate){
+		case airattackdown:		
+			break;
+		case ducking:			
+			break;
+		default: 				player.body.setSize(spritesizew/Math.abs(player.scale.x), spritesizeh/Math.abs(player.scale.y), 0, 0);
+	}
+	
+	
+}
+
+let updatebars = (player) => {
+	
+	player.hpbar.width = player.curhp;
+	player.stambar.width = player.curstam;
+	
+	if(player.curstam < player.maxstam){
+		player.curstam += regenstam; //add stam per frame
+	}
+	if(player.curstam > player.maxstam){
+		player.curstam = player.maxstam; //dont go over
+	}
+	if(player.curstam < 0){
+		player.curstam = 0; //dont go lower
+	}
+    if(player.curhp < 0){
+		player.curhp = 0; //dont go lower
+   	}
+	
+}
+
+
+
+let addweapontoplayer = (player, otherplayer) =>{
+	
+	//var hitWeapon = game.physics.arcade.collide(player, weapons);
+	
+	var hitsword1 = game.physics.arcade.collide(player, sword1);
+	var hitsword2 = game.physics.arcade.collide(player, sword2);	
+	var hitshield1 = game.physics.arcade.collide(player, shield1);
+	var hitshield2 = game.physics.arcade.collide(player, shield2);
+	
+	if (player.sword === 0){
+	
+		if(hitsword1 && otherplayer.sword !== 1){
+			player.sword = 1;
+			sword1.onplayer = player;
+		}
+		
+		if(hitsword2 && otherplayer.sword !== 2){
+			player.sword = 2;
+			sword2.onplayer = player;
+		}	
+		
+	}
+	
+	if(player.shield === 0){
+		
+		if(hitshield1 && otherplayer.shield !== 1){
+			player.shield = 1;
+			shield1.onplayer = player;
+		}
+		
+		if(hitshield2 && otherplayer.shield !== 2){
+			player.shield = 2;
+			shield2.onplayer = player;
+		}
+		
+	}
+	
+}
+
+
+let updateweaponposition = (player) =>{
+	
+	switch(player.sword){
+		case 1:		setswordposition(player, sword1);
+			break;
+		case 2:		setswordposition(player, sword2);
+			break;
+		default:
+	}
+	
+	switch(player.shield){
+		case 1:		setshieldposition(player, shield1);
+			break;
+		case 2:		setshieldposition(player, shield2);
+			break;
+		default:
+	}
+	
+}
+//working on rn
+let setswordposition = (player, sword) =>{
+	
+	
+	switch (player.curstate){
+		case walking:			setswordwalk(player, sword);
+			break;
+		case idle:				setswordidle(player, sword);
+			break;
+		case normalattack:		setswordnormalattack(player, sword);
+			break;
+		case blocking:			setswordblocking(player, sword);
+			break;
+		case exhaustedidle: 	setswordexhaustedidle(player, sword);
+			break;
+		case airattackdown:		setswordairattackdown(player, sword);
+			break;
+		case jumping:			setswordjumping(player, sword);
+			break;
+		case falling:			setswordfalling(player, sword);
+			break;
+		case ducking:			setswordducking(player, sword);
+			break;
+		default: 				sword.x = player.x - player.width/4;
+								sword.y = player.y;
+								sword.angle = 0;
+	}
+	
+}
+//have to update
+let setshieldposition = (player, shield) =>{
+	
+	switch (player.curstate){
+		case walking:			setswordwalk(player, shield);
+			break;
+		case idle:				setswordidle(player, shield);
+			break;
+		case normalattack:		setswordnormalattack(player, shield);
+			break;
+		case blocking:			setswordblocking(player, shield);
+			break;
+		case exhaustedidle: 	setswordexhaustedidle(player, shield);
+			break;
+		case airattackdown:		setswordairattackdown(player, shield);
+			break;
+		case jumping:			setswordjumping(player, shield);
+			break;
+		case falling:			setswordfalling(player, shield);
+			break;
+		case ducking:			setswordducking(player, shield);
+			break;
+		default: 				shield.x = player.x - player.width/4;
+								shield.y = player.y;
+	}
+	
+}
+
+
 let setswordwalk = (player, sword) =>{
 	
 	let swordinhandy = player.y - 3;
@@ -498,21 +604,126 @@ let setswordexhaustedidle = (player, sword) =>{
 	}
 	
 }
-
-//do
+//working on
 let setswordnormalattack = (player, sword) =>{
 	
-	sword.x = player.x - player.width/4;
-	sword.y = player.y;
-	sword.angle = 0;
-}
+	let swordinhandy; 
+	let swordinhandx = player.x - player.width/4;
+	let perf;
+	
+	switch(player.frame){
+		
+	case 12:	perf = 5;
+				swordinhandy = player.y - 15;
+			switch(player.scale.x){
+			case -playerscalew:
+						sword.angle = 30;
+						sword.x = swordinhandx + perf;
+						sword.y = swordinhandy;
+				break;
+			default: 
+						sword.angle = -30;
+						sword.x = swordinhandx - perf;
+						sword.y = swordinhandy;
+			}
+		break;
+		
+	case 13: 	perf = 9;
+				swordinhandy = player.y - 9;
+			switch(player.scale.x){
+			case -playerscalew:
+						sword.angle = 70;
+						sword.x = swordinhandx + perf;
+						sword.y = swordinhandy;
+				break;
+			default: 
+						sword.angle = -70;
+						sword.x = swordinhandx - perf;
+						sword.y = swordinhandy;
+			}
+		break;
+		
+	case 14: 	perf = 9;
+				swordinhandy = player.y - 0;
+			switch(player.scale.x){
+			case -playerscalew:
+						sword.angle = 100;
+						sword.x = swordinhandx + perf;
+						sword.y = swordinhandy;
+				break;
+			default: 
+						sword.angle = -100;
+						sword.x = swordinhandx - perf;
+						sword.y = swordinhandy;
+			}
+		break;
+		
+	case 15: 	perf = 5;
+				swordinhandy = player.y + 9;
+			switch(player.scale.x){
+			case -playerscalew:
+						sword.angle = 140;
+						sword.x = swordinhandx + perf;
+						sword.y = swordinhandy;
+				break;
+			default: 
+						sword.angle = -140;
+						sword.x = swordinhandx - perf;
+						sword.y = swordinhandy;
+			}
+		break;
+		
+	default:
+	}
 
+}
 //do
 let setswordairattackdown = (player, sword) =>{
 	
 	sword.x = player.x - player.width/4;
 	sword.y = player.y;
 	sword.angle = 0;
+}
+
+let setswordblocking = (player, sword) =>{
+	
+	let swordinhandy; 
+	let swordinhandx = player.x - player.width/4;
+	let perf = 8;
+	
+	switch(player.frame){
+		
+	case 10:	swordinhandy = player.y - 10;
+			switch(player.scale.x){
+			case -playerscalew:
+						sword.angle = 30;
+						sword.x = swordinhandx + perf;
+						sword.y = swordinhandy;
+				break;
+			default: 
+						sword.angle = -30;
+						sword.x = swordinhandx - perf;
+						sword.y = swordinhandy;
+			}
+		break;
+		
+	case 11: swordinhandy = player.y - 9;
+			switch(player.scale.x){
+			case -playerscalew:
+						sword.angle = 30;
+						sword.x = swordinhandx + perf;
+						sword.y = swordinhandy;
+				break;
+			default: 
+						sword.angle = -30;
+						sword.x = swordinhandx - perf;
+						sword.y = swordinhandy;
+			}
+		break;
+		
+	default:
+	}
+	
 }
 
 let setswordjumping = (player, sword) =>{
@@ -573,103 +784,50 @@ let setswordducking = (player, sword) =>{
 	
 }
 
-let playerstates = (player) => {
-	//handles current player states attacking walking etc
 
-	switch (player.curstate){
-		case walking:			player.animations.play('left');
-			break;
-		case idle:				player.animations.play('idle');
-			break;
-		case normalattack:		player.animations.play('normalattack');
-			break;
-		case blocking:			player.animations.play('blocking');
-			break;
-		case exhaustedidle: 	player.animations.play('exhaustedidle');
-			break;
-		case airattackdown:		player.animations.play('airattackdown');
-								player.body.setSize(spritesizew/Math.abs(player.scale.x), (spritesizeh/Math.abs(player.scale.y))/2, 0, player.height/2);
-			break;
-		case jumping:			player.animations.stop();
-								player.frame = 8
-			break;
-		case falling:			player.animations.stop();
-								player.frame = 9
-			break;
-		case ducking:			player.animations.stop();
-								player.body.setSize(spritesizew/Math.abs(player.scale.x), (spritesizeh/Math.abs(player.scale.y))/2, 0, player.height/2);
-								player.frame = 20;
-			break;
-		default: 				player.animations.stop();
-								player.frame = 0;
+
+let removecollisionifinhand = (handobject) =>{
+	
+	handobjgrav = handobject.body.allowGravity;
+	
+	if(handobject.onplayer === player1 || handobject.onplayer === player2){
+		handobject.body.checkCollision.none = true;
+		handobjgrav = false;
 	}
 	
-	switch (player.curstate){
-		case airattackdown:		
-			break;
-		case ducking:			
-			break;
-		default: 				player.body.setSize(spritesizew/Math.abs(player.scale.x), spritesizeh/Math.abs(player.scale.y), 0, 0);
-	}
-	
-	
-}
-//working on rn
-let setswordposition = (player, sword) =>{
-	
-	
-	switch (player.curstate){
-		case walking:			setswordwalk(player, sword);
-			break;
-		case idle:				setswordidle(player, sword);
-			break;
-		case normalattack:		setswordnormalattack(player, sword);
-			break;
-		case blocking:			setswordblocking(player, sword);
-			break;
-		case exhaustedidle: 	setswordexhaustedidle(player, sword);
-			break;
-		case airattackdown:		setswordairattackdown(player, sword);
-			break;
-		case jumping:			setswordjumping(player, sword);
-			break;
-		case falling:			setswordfalling(player, sword);
-			break;
-		case ducking:			setswordducking(player, sword);
-			break;
-		default: 				sword.x = player.x - player.width/4;
-								sword.y = player.y;
-								sword.angle = 0;
+	if(handobjgrav === true){
+		handobject.body.velocity.x = 0;
+	}else{
+		handobject.body.velocity.x = 0;
+		handobject.body.velocity.y = 0;
 	}
 	
 }
-//have to update
-let setshieldposition = (player, shield) =>{
+
+let checkforscene = (player1, player2) =>{
 	
-	switch (player.curstate){
-		case walking:			setswordwalk(player, shield);
-			break;
-		case idle:				setswordidle(player, shield);
-			break;
-		case normalattack:		setswordnormalattack(player, shield);
-			break;
-		case blocking:			setswordblocking(player, shield);
-			break;
-		case exhaustedidle: 	setswordexhaustedidle(player, shield);
-			break;
-		case airattackdown:		setswordairattackdown(player, shield);
-			break;
-		case jumping:			setswordjumping(player, shield);
-			break;
-		case falling:			setswordfalling(player, shield);
-			break;
-		case ducking:			setswordducking(player, shield);
-			break;
-		default: 				shield.x = player.x - player.width/4;
-								shield.y = player.y;
+	let leftside, rightside;
+	if(player1.x <= game.camera.x){
+		
+		game.camera.x = game.camera.x - game.camera.width; //move camera left
+			leftside = game.camera.x + (game.camera.width/4);
+			rightside = game.camera.x + game.camera.width - (game.camera.width/4);
+		player1.x = rightside;
+		player2.x = leftside;
+		text.x = game.camera.x;
+		
+	}else if(player2.x >= game.camera.x+game.camera.width){
+		
+		game.camera.x = game.camera.x + game.camera.width; //move camera right
+			leftside = game.camera.x + (game.camera.width/4);
+			rightside = game.camera.x + game.camera.width - (game.camera.width/4);
+		player2.x = leftside;
+		player1.x = rightside;
+		text.x = game.camera.x;
 	}
 	
 }
+
 
 let addplayerstats = (player) =>{
 	
@@ -734,49 +892,5 @@ let addweaponstats = (weapon) => {
 	weapon.body.collideWorldBounds = true;
 	
 	weapon.onplayer = 0;
-	
-}
-
-let updatebars = (player) => {
-	
-	player.hpbar.width = player.curhp;
-	player.stambar.width = player.curstam;
-	
-	if(player.curstam < player.maxstam){
-		player.curstam += regenstam; //add stam per frame
-	}
-	if(player.curstam > player.maxstam){
-		player.curstam = player.maxstam; //dont go over
-	}
-	if(player.curstam < 0){
-		player.curstam = 0; //dont go lower
-	}
-    if(player.curhp < 0){
-		player.curhp = 0; //dont go lower
-   	}
-	
-}
-
-let checkforscene = (player1, player2) =>{
-	
-	let leftside, rightside;
-	if(player1.x <= game.camera.x){
-		
-		game.camera.x = game.camera.x - game.camera.width; //move camera left
-			leftside = game.camera.x + (game.camera.width/4);
-			rightside = game.camera.x + game.camera.width - (game.camera.width/4);
-		player1.x = rightside;
-		player2.x = leftside;
-		text.x = game.camera.x;
-		
-	}else if(player2.x >= game.camera.x+game.camera.width){
-		
-		game.camera.x = game.camera.x + game.camera.width; //move camera right
-			leftside = game.camera.x + (game.camera.width/4);
-			rightside = game.camera.x + game.camera.width - (game.camera.width/4);
-		player2.x = leftside;
-		player1.x = rightside;
-		text.x = game.camera.x;
-	}
 	
 }
