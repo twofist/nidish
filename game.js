@@ -421,11 +421,11 @@ let setswordidle = (player, sword) =>{
 	
 	let swordinhandy; 
 	let swordinhandx = player.x - player.width/4;
-	let perf = 3;
+	let perf = 4;
 	
 	switch(player.frame){
 		
-	case 1:	swordinhandy = player.y - 5;
+	case 1:	swordinhandy = player.y - 3;
 			switch(player.scale.x){
 			case -playerscalew:
 						sword.angle = 30;
@@ -439,7 +439,7 @@ let setswordidle = (player, sword) =>{
 			}
 		break;
 		
-	case 2: swordinhandy = player.y - 4;
+	case 2: swordinhandy = player.y - 2;
 			switch(player.scale.x){
 			case -playerscalew:
 						sword.angle = 30;
