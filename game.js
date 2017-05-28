@@ -851,6 +851,209 @@ let setswordducking = (player, sword) =>{
 }
 
 
+//working on this part rn
+let setshieldwalk = (player, shield) =>{
+	
+	let shieldinhandy = player.y + 4; 
+	let shieldinhandx = player.x - player.width/4;
+	let perf = - 12;
+	
+	switch(player.scale.x){
+		case -playerscalew:
+				shield.scale.x = playerscalew;
+				shield.angle = 0;
+				shield.x = shieldinhandx + perf;
+				shield.y = shieldinhandy;
+			break;
+		default: 
+				shield.scale.x = -playerscalew;
+				shield.angle = -0;
+				shield.x = shieldinhandx - perf;
+				shield.y = shieldinhandy;
+	}
+	
+}
+
+let setshieldidle = (player, shield) =>{
+	
+	let shieldinhandy; 
+	let shieldinhandx = player.x - player.width/4;
+	let perf = - 15;
+	
+	switch(player.frame){
+		
+	case 1:	shieldinhandy = player.y + 4;
+			switch(player.scale.x){
+			case -playerscalew:
+						shield.scale.x = playerscalew;
+						shield.angle = 0;
+						shield.x = shieldinhandx + perf;
+						shield.y = shieldinhandy;
+				break;
+			default: 
+						shield.scale.x = -playerscalew;
+						shield.angle = -0;
+						shield.x = shieldinhandx - perf;
+						shield.y = shieldinhandy;
+			}
+		break;
+		
+	case 2: shieldinhandy = player.y + 5;
+			switch(player.scale.x){
+			case -playerscalew:
+						shield.scale.x = playerscalew;
+						shield.angle = 0;
+						shield.x = shieldinhandx + perf;
+						shield.y = shieldinhandy;
+				break;
+			default: 
+						shield.scale.x = -playerscalew;
+						shield.angle = -0;
+						shield.x = shieldinhandx - perf;
+						shield.y = shieldinhandy;
+			}
+		break;
+		
+	default:
+	}
+	
+}
+
+let setshieldexhaustedidle = (player, shield) =>{
+	
+	let shieldinhandy; 
+	let shieldinhandx = player.x - player.width/4;
+	let perf = - 15;
+	
+	switch(player.frame){
+		
+	case 3:	shieldinhandy = player.y + 4;
+			switch(player.scale.x){
+			case -playerscalew:
+						shield.scale.x = playerscalew;
+						shield.angle = 0;
+						shield.x = shieldinhandx + perf;
+						shield.y = shieldinhandy;
+				break;
+			default: 
+						shield.scale.x = -playerscalew;
+						shield.angle = -0;
+						shield.x = shieldinhandx - perf;
+						shield.y = shieldinhandy;
+			}
+		break;
+		
+	case 4: shieldinhandy = player.y + 5;
+			switch(player.scale.x){
+			case -playerscalew:
+						shield.scale.x = playerscalew;
+						shield.angle = 0;
+						shield.x = shieldinhandx + perf;
+						shield.y = shieldinhandy;
+				break;
+			default: 
+						shield.scale.x = -playerscalew;
+						shield.angle = -0;
+						shield.x = shieldinhandx - perf;
+						shield.y = shieldinhandy;
+			}
+		break;
+		
+	default:
+	}
+	
+}
+
+let setshieldnormalattack = (player, shield) =>{
+	
+	
+
+}
+
+let setshieldairattackdown = (player, shield) =>{
+	
+	
+	
+}
+
+let setshieldblocking = (player, shield) =>{
+	
+	let shieldinhandy; 
+	let shieldinhandx = player.x - player.width/4;
+	let perf = 6;
+	
+	switch(player.frame){
+		
+	case 10:	shieldinhandy = player.y + 1;
+			switch(player.scale.x){
+			case -playerscalew:
+						shield.scale.x = -playerscalew;
+						shield.angle = 0;
+						shield.x = shieldinhandx + perf;
+						shield.y = shieldinhandy;
+				break;
+			default: 
+						shield.scale.x = playerscalew;
+						shield.angle = -0;
+						shield.x = shieldinhandx - perf;
+						shield.y = shieldinhandy;
+			}
+		break;
+		
+	case 11: shieldinhandy = player.y + 2;
+			switch(player.scale.x){
+			case -playerscalew:
+						shield.scale.x = -playerscalew;
+						shield.angle = 0;
+						shield.x = shieldinhandx + perf;
+						shield.y = shieldinhandy;
+				break;
+			default: 
+						shield.scale.x = playerscalew;
+						shield.angle = -0;
+						shield.x = shieldinhandx - perf;
+						shield.y = shieldinhandy;
+			}
+		break;
+		
+	default:
+	}
+	
+}
+
+let setshieldjumping = (player, shield) =>{
+	
+	
+}
+
+let setshieldfalling = (player, shield) =>{
+	
+	
+}
+
+let setshieldducking = (player, shield) =>{
+	
+	let shieldinhandy = player.y + player.height/2 - 4;
+	let shieldinhandx = player.x - player.width/4;
+	let perf = -14;
+	
+	switch(player.scale.x){
+		case -playerscalew:
+					shield.scale.x = playerscalew;
+					shield.angle = 45;
+					shield.x = shieldinhandx + perf;
+					shield.y = shieldinhandy;
+			break;
+		default: 
+					shield.scale.x = -playerscalew;
+					shield.angle = -45;
+					shield.x = shieldinhandx - perf;
+					shield.y = shieldinhandy;
+	}
+	
+}
+
+
 
 let removecollisionifinhand = (handobject) =>{
 	
