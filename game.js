@@ -445,7 +445,7 @@ let updateweaponposition = (player) =>{
 	}
 	
 }
-//working on rn
+
 let setswordposition = (player, sword) =>{
 	
 	
@@ -474,30 +474,31 @@ let setswordposition = (player, sword) =>{
 	}
 	
 }
-//have to update
+
 let setshieldposition = (player, shield) =>{
 	
 	switch (player.curstate){
-		case walking:			setswordwalk(player, shield);
+		case walking:			setshieldwalk(player, shield);
 			break;
-		case idle:				setswordidle(player, shield);
+		case idle:				setshieldidle(player, shield);
 			break;
-		case normalattack:		setswordnormalattack(player, shield);
+		case normalattack:		setshieldnormalattack(player, shield);
 			break;
-		case blocking:			setswordblocking(player, shield);
+		case blocking:			setshieldblocking(player, shield);
 			break;
-		case exhaustedidle: 	setswordexhaustedidle(player, shield);
+		case exhaustedidle: 	setshieldexhaustedidle(player, shield);
 			break;
-		case airattackdown:		setswordairattackdown(player, shield);
+		case airattackdown:		setshieldairattackdown(player, shield);
 			break;
-		case jumping:			setswordjumping(player, shield);
+		case jumping:			setshieldjumping(player, shield);
 			break;
-		case falling:			setswordfalling(player, shield);
+		case falling:			setshieldfalling(player, shield);
 			break;
-		case ducking:			setswordducking(player, shield);
+		case ducking:			setshieldducking(player, shield);
 			break;
 		default: 				shield.x = player.x - player.width/4;
 								shield.y = player.y;
+								shield.angle = 0;
 	}
 	
 }
