@@ -604,7 +604,7 @@ let setswordexhaustedidle = (player, sword) =>{
 	}
 	
 }
-//working on
+
 let setswordnormalattack = (player, sword) =>{
 	
 	let swordinhandy; 
@@ -677,12 +677,78 @@ let setswordnormalattack = (player, sword) =>{
 	}
 
 }
-//do
+
 let setswordairattackdown = (player, sword) =>{
 	
-	sword.x = player.x - player.width/4;
-	sword.y = player.y;
-	sword.angle = 0;
+	let swordinhandy; 
+	let swordinhandx = player.x - player.width/4;
+	let perf;
+	
+	switch(player.frame){
+		
+	case 16:	perf = 7;
+				swordinhandy = player.y + 10;
+			switch(player.scale.x){
+			case -playerscalew:
+						sword.angle = 130;
+						sword.x = swordinhandx + perf;
+						sword.y = swordinhandy;
+				break;
+			default: 
+						sword.angle = -130;
+						sword.x = swordinhandx - perf;
+						sword.y = swordinhandy;
+			}
+		break;
+		
+	case 17: 	perf = 1;
+				swordinhandy = player.y + 14;
+			switch(player.scale.x){
+			case -playerscalew:
+						sword.angle = 160;
+						sword.x = swordinhandx + perf;
+						sword.y = swordinhandy;
+				break;
+			default: 
+						sword.angle = -160;
+						sword.x = swordinhandx - perf;
+						sword.y = swordinhandy;
+			}
+		break;
+		
+	case 18: 	perf = -8;
+				swordinhandy = player.y + 16;
+			switch(player.scale.x){
+			case -playerscalew:
+						sword.angle = 200;
+						sword.x = swordinhandx + perf;
+						sword.y = swordinhandy;
+				break;
+			default: 
+						sword.angle = -200;
+						sword.x = swordinhandx - perf;
+						sword.y = swordinhandy;
+			}
+		break;
+		
+	case 19: 	perf = -14;
+				swordinhandy = player.y + 12;
+			switch(player.scale.x){
+			case -playerscalew:
+						sword.angle = 230;
+						sword.x = swordinhandx + perf;
+						sword.y = swordinhandy;
+				break;
+			default: 
+						sword.angle = -230;
+						sword.x = swordinhandx - perf;
+						sword.y = swordinhandy;
+			}
+		break;
+		
+	default:
+	}
+	
 }
 
 let setswordblocking = (player, sword) =>{
