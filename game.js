@@ -967,7 +967,23 @@ let setshieldexhaustedidle = (player, shield) =>{
 
 let setshieldnormalattack = (player, shield) =>{
 	
+	let shieldinhandy = player.y + 4; 
+	let shieldinhandx = player.x - player.width/4;
+	let perf = - 15;
 	
+	switch(player.scale.x){
+		case -playerscalew:
+				shield.scale.x = playerscalew;
+				shield.angle = 0;
+				shield.x = shieldinhandx + perf;
+				shield.y = shieldinhandy;
+			break;
+		default: 
+				shield.scale.x = -playerscalew;
+				shield.angle = -0;
+				shield.x = shieldinhandx - perf;
+				shield.y = shieldinhandy;
+	}
 
 }
 
