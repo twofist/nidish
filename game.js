@@ -1090,14 +1090,15 @@ let setshieldducking = (player, shield) =>{
 
 let removecollisionifinhand = (handobject) =>{
 	
-	handobjgrav = handobject.body.allowGravity;
-	
 	if(handobject.onplayer === player1 || handobject.onplayer === player2){
 		handobject.body.checkCollision.none = true;
-		handobjgrav = false;
+		handobject.body.allowGravity = false;
+	}else{
+		handobject.body.checkCollision.none = false;
+		handobject.body.allowGravity = true;
 	}
 	
-	if(handobjgrav === true){
+	if(handobject.body.allowGravity === true){
 		handobject.body.velocity.x = 0;
 	}else{
 		handobject.body.velocity.x = 0;
