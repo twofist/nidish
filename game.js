@@ -852,7 +852,6 @@ let setswordducking = (player, sword) =>{
 }
 
 
-//working on this part rn
 let setshieldwalk = (player, shield) =>{
 	
 	let shieldinhandy = player.y + 4; 
