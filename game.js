@@ -156,9 +156,6 @@ function update() {
 		//collide the player with the platforms
 		keepplayerupdated(player1, player2, hitPlayer);
 		keepplayerupdated(player2, player1, hitPlayer);
-
-		//check if player goes outside the camera
-		checkforscene(player1, player2);
 		
 		updateweaponposition(player1);
 		updateweaponposition(player2);
@@ -167,6 +164,9 @@ function update() {
 		removecollisionifinhand(sword2);
 		removecollisionifinhand(shield1);
 		removecollisionifinhand(shield2);
+		
+		//check if player goes outside the camera
+		checkforscene(player1, player2);
 	
 	text.setText("FPS: " +game.time.fps);
 
@@ -508,7 +508,7 @@ let setswordwalk = (player, sword) =>{
 	
 	let swordinhandy = player.y - 3;
 	let swordinhandx = player.x - player.width/4;
-	let perf = 8;
+	let perf = 5;
 	
 	switch(player.scale.x){
 		case -playerscalew:
@@ -795,7 +795,7 @@ let setswordblocking = (player, sword) =>{
 
 let setswordjumping = (player, sword) =>{
 	
-	let swordinhandy = player.y - 7;
+	let swordinhandy = player.y - 10;
 	let swordinhandx = player.x - player.width/4;
 	let perf = 5;
 	
@@ -814,7 +814,7 @@ let setswordjumping = (player, sword) =>{
 
 let setswordfalling = (player, sword) =>{
 	
-	let swordinhandy = player.y - 7;
+	let swordinhandy = player.y - 8;
 	let swordinhandx = player.x - player.width/4;
 	let perf = 5;
 	
@@ -857,7 +857,7 @@ let setshieldwalk = (player, shield) =>{
 	
 	let shieldinhandy = player.y + 4; 
 	let shieldinhandx = player.x - player.width/4;
-	let perf = - 12;
+	let perf = - 15;
 	
 	switch(player.scale.x){
 		case -playerscalew:
@@ -1056,11 +1056,45 @@ let setshieldblocking = (player, shield) =>{
 
 let setshieldjumping = (player, shield) =>{
 	
+	let shieldinhandy = player.y - 6; 
+	let shieldinhandx = player.x - player.width/4;
+	let perf = - 15;
+	
+	switch(player.scale.x){
+		case -playerscalew:
+				shield.scale.x = playerscalew;
+				shield.angle = 0;
+				shield.x = shieldinhandx + perf;
+				shield.y = shieldinhandy;
+			break;
+		default: 
+				shield.scale.x = -playerscalew;
+				shield.angle = -0;
+				shield.x = shieldinhandx - perf;
+				shield.y = shieldinhandy;
+	}
 	
 }
 
 let setshieldfalling = (player, shield) =>{
 	
+	let shieldinhandy = player.y - 4; 
+	let shieldinhandx = player.x - player.width/4;
+	let perf = - 15;
+	
+	switch(player.scale.x){
+		case -playerscalew:
+				shield.scale.x = playerscalew;
+				shield.angle = 0;
+				shield.x = shieldinhandx + perf;
+				shield.y = shieldinhandy;
+			break;
+		default: 
+				shield.scale.x = -playerscalew;
+				shield.angle = -0;
+				shield.x = shieldinhandx - perf;
+				shield.y = shieldinhandy;
+	}
 	
 }
 
@@ -1100,9 +1134,12 @@ let removecollisionifinhand = (handobject) =>{
 	
 	if(handobject.body.allowGravity === true){
 		handobject.body.velocity.x = 0;
-	}else{
-		handobject.body.velocity.x = 0;
-		handobject.body.velocity.y = 0;
+	}else if(handobject.onplayer === player1){
+		handobject.body.velocity.x = player1.body.velocity.x;
+		handobject.body.velocity.y = player1.body.velocity.y;
+	}else if(handobject.onplayer === player2){
+		handobject.body.velocity.x = player2.body.velocity.x;
+		handobject.body.velocity.y = player2.body.velocity.y;
 	}
 	
 }
