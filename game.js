@@ -40,10 +40,10 @@ const	gamewidth = 720,
 		falling = 8,
 		ducking = 9;	
 
-var game = new Phaser.Game(gamewidth, gameheight, Phaser.AUTO, '', { preload: preload, create: create, update: update });
-var platforms;
-var swords;
-var shields;
+let game = new Phaser.Game(gamewidth, gameheight, Phaser.AUTO, '', { preload: preload, create: create, update: update }),
+	platforms,
+	swords,
+	shields;
 
 function preload() {
 	
@@ -154,8 +154,8 @@ function update() {
 		addweapontoplayer(player2, player1);
 		
 		//collide the player with the platforms
-		keepplayerupdated(player1, player2, hitPlayer);
-		keepplayerupdated(player2, player1, hitPlayer);
+		keepplayerupdated(player1);
+		keepplayerupdated(player2);
 		
 		updateweaponposition(player1);
 		updateweaponposition(player2);
@@ -174,46 +174,54 @@ function update() {
 
 
 
-let keepplayerupdated = (player, otherplayer, hitPlayer) =>{
+let keepplayerupdated = (player) =>{
 	
 	player.body.velocity.x = 0; //resets velocity so it doesnt move forever
 		
-	movement(player, hitPlayer, otherplayer); //handles movement
+	movement(player); //handles movement
 	updatebars(player); //updates hp/stambar
 	playerstates(player); //handles current animation
 		
 }
 
-let movement = (player, hitPlayer, otherplayer) => {
+let movement = (player) => {
 
 	var hitPlatform = game.physics.arcade.collide(player, platforms);
 
 	if(player === player1){
-		player1movement(player, hitPlatform, hitPlayer, otherplayer);
+		playermovement(player, cursors.left, cursors.right, cursors.up, cursors.down, wasd.Okey, wasd.Pkey);
 	}
 	if (player === player2){
-		player2movement(player, hitPlatform, hitPlayer, otherplayer);
+		playermovement(player, wasd.left, wasd.right, wasd.up, wasd.down, wasd.Zkey, wasd.Tkey);
 	}
 	
 }
 
-let player1movement = (player, hitPlatform, hitPlayer, otherplayer) =>{
+let playermovement = (player, leftkey, rightkey, upkey, downkey, attackkey, blockkey) =>{
 	
-	if(cursors.down.isDown && player.body.touching.down){
+	if(downkey.isDown && player.body.touching.down){
 		player.curstate = ducking;
-	}else if(cursors.left.isDown){
+	}else if(player === player1 && leftkey.isDown){
 		player.body.velocity.x = -walkspeed;
 		player.curstate = walking;
-		switch(player.scale.x){case -playerscalew: player.scale.x = player.scale.x * -1; break; default: }
-	}else if(cursors.right.isDown && player.x-(player.width/2) < game.camera.x+game.camera.width){
+			switch(player.scale.x){case -playerscalew: player.scale.x = player.scale.x * -1; break; default: }
+	}else if(player === player2 && leftkey.isDown && player.x-(player.width/2) > game.camera.x){
+		player.body.velocity.x = -walkspeed;
+		player.curstate = walking;
+			switch(player.scale.x){case -playerscalew: player.scale.x = player.scale.x * -1; break; default: }
+	}else if(player === player1 && rightkey.isDown && player.x-(player.width/2) < game.camera.x+game.camera.width){
 		player.body.velocity.x = walkspeed;
 		player.curstate = walking;
-		switch(player.scale.x){case playerscalew: player.scale.x = player.scale.x * -1; break; default: }
-	}else if(wasd.Pkey.isDown && player.body.touching.down && player.shield !== 0){
+			switch(player.scale.x){case playerscalew: player.scale.x = player.scale.x * -1; break; default: }
+	}else if(player === player2 && rightkey.isDown){
+		player.body.velocity.x = walkspeed;
+		player.curstate = walking;
+			switch(player.scale.x){case playerscalew: player.scale.x = player.scale.x * -1; break; default: }
+	}else if(blockkey.isDown && player.body.touching.down && player.shield !== 0){
 		player.blocking = true;
 		player.curstam -= holdblockcost;
 		player.curstate = blocking;
-	}else if(wasd.Okey.isDown && player.body.touching.down && player.sword !== 0){
+	}else if(attackkey.isDown && player.body.touching.down && player.sword !== 0){
 		player.curstate = normalattack;
 	}else if(player.curstam < player.maxstam/5 && player.body.touching.down){
 		player.curstate = exhaustedidle;
@@ -221,7 +229,7 @@ let player1movement = (player, hitPlatform, hitPlayer, otherplayer) =>{
 		player.curstate = idle;
 	}
 	
-	if(wasd.Okey.isDown && !player.body.touching.down && player.sword !== 0){
+	if(attackkey.isDown && !player.body.touching.down && player.sword !== 0){
 		player.curstate = airattackdown
 	}else if(player.body.velocity.y > 0 && !player.body.touching.down){
 		player.curstate = falling;
@@ -229,53 +237,11 @@ let player1movement = (player, hitPlatform, hitPlayer, otherplayer) =>{
 		player.curstate = jumping;
 	}
 	
-	if(!wasd.Pkey.isDown && player.blocking === true){
+	if(!blockkey.isDown && player.blocking === true){
 		player.blocking = false;
 	}
 	
-	if(cursors.up.isDown && player.body.touching.down){
-		player.body.velocity.y = -jumpvelocity;
-	}
-	
-}
-
-let player2movement = (player, hitPlatform, hitPlayer, otherplayer) =>{
-	
-	if(wasd.down.isDown && player.body.touching.down){
-		player.curstate = ducking;
-	}else if(wasd.left.isDown){
-		player.body.velocity.x = -walkspeed;
-		player.curstate = walking;
-		switch(player.scale.x){case -playerscalew: player.scale.x = player.scale.x * -1; break; default: }
-	}else if(wasd.right.isDown && player.x-(player.width/2) < game.camera.x+game.camera.width){
-		player.body.velocity.x = walkspeed;
-		player.curstate = walking;
-		switch(player.scale.x){case playerscalew: player.scale.x = player.scale.x * -1; break; default: }
-	}else if(wasd.Tkey.isDown && player.body.touching.down && player.shield !== 0){
-		player.blocking = true;
-		player.curstam -= holdblockcost;
-		player.curstate = blocking;
-	}else if(wasd.Zkey.isDown && player.body.touching.down && player.sword !== 0){
-		player.curstate = normalattack;
-	}else if(player.curstam < player.maxstam/5 && player.body.touching.down){
-		player.curstate = exhaustedidle;
-	}else{
-		player.curstate = idle;
-	}
-	
-	if(wasd.Zkey.isDown && !player.body.touching.down && player.sword !== 0){
-		player.curstate = airattackdown
-	}else if(player.body.velocity.y > 0 && !player.body.touching.down){
-		player.curstate = falling;
-	}else if(player.body.velocity.y < 0 && !player.body.touching.down){
-		player.curstate = jumping;
-	}
-	
-	if(!wasd.Tkey.isDown && player.blocking === true){
-		player.blocking = false;
-	}
-	
-	if(wasd.up.isDown && player.body.touching.down){
+	if(upkey.isDown && player.body.touching.down){
 		player.body.velocity.y = -jumpvelocity;
 	}
 	
