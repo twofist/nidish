@@ -57,7 +57,7 @@ function preload() {
 
 function create() {
 	
-	game.world.setBounds(0, 0, game.width*3, gameheight);
+	game.world.setBounds(0, 0, game.width*5, gameheight);
 
 	 //enable physics system
     game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -69,10 +69,10 @@ function create() {
     platforms.enableBody = true;
 
     //create ground
-    var ground = platforms.create(0, game.world.height - 64, 'platform');
+    let ground = platforms.create(0, game.world.height - 64, 'platform');
 
     //scale it to fit the game size
-    ground.scale.setTo(6, 1);
+    ground.scale.setTo(9, 1);
 
     //make it not fall when you jump on it
     ground.body.immovable = true;
@@ -146,9 +146,9 @@ function create() {
 
 function update() {
 		
-		var swordplatform = game.physics.arcade.collide(swords, platforms);
-		var shieldplatform = game.physics.arcade.collide(shields, platforms);
-		var hitPlayer = game.physics.arcade.collide(player1, player2);
+		let swordplatform = game.physics.arcade.collide(swords, platforms);
+		let shieldplatform = game.physics.arcade.collide(shields, platforms);
+		let hitPlayer = game.physics.arcade.collide(player1, player2);
 		
 		addweapontoplayer(player1, player2);
 		addweapontoplayer(player2, player1);
@@ -186,7 +186,7 @@ let keepplayerupdated = (player) =>{
 
 let movement = (player) => {
 
-	var hitPlatform = game.physics.arcade.collide(player, platforms);
+	let hitPlatform = game.physics.arcade.collide(player, platforms);
 
 	if(player === player1){
 		playermovement(player, cursors.left, cursors.right, cursors.up, cursors.down, wasd.Okey, wasd.Pkey);
@@ -313,12 +313,10 @@ let updatebars = (player) => {
 
 let addweapontoplayer = (player, otherplayer) =>{
 	
-	//var hitWeapon = game.physics.arcade.collide(player, weapons);
-	
-	var hitsword1 = game.physics.arcade.collide(player, sword1);
-	var hitsword2 = game.physics.arcade.collide(player, sword2);	
-	var hitshield1 = game.physics.arcade.collide(player, shield1);
-	var hitshield2 = game.physics.arcade.collide(player, shield2);
+	let hitsword1 = game.physics.arcade.collide(player, sword1);
+	let hitsword2 = game.physics.arcade.collide(player, sword2);	
+	let hitshield1 = game.physics.arcade.collide(player, shield1);
+	let hitshield2 = game.physics.arcade.collide(player, shield2);
 	
 	if (player.sword === 0){
 	
@@ -372,8 +370,7 @@ let updateweaponposition = (player) =>{
 }
 
 let setswordposition = (player, sword) =>{
-	
-	
+		
 	switch (player.curstate){
 		case walking:			setswordwalk(player, sword);
 			break;
@@ -1126,14 +1123,14 @@ let addplayerstats = (player) =>{
 	player.animations.add('normalattack', [12, 13, 14, 15], 10, true);
 	player.animations.add('airattackdown', [16, 17, 18, 19], 10, false);
 	
-	var hpbar = game.add.graphics();
+	let hpbar = game.add.graphics();
 		hpbar.beginFill(0xFF3300);
 		hpbar.drawRect(-20, -30, 40, 4);
 		hpbar.endFill();
 	player.addChild(hpbar);
 	player.hpbar = hpbar;
 	
-	var stambar = game.add.graphics();
+	let stambar = game.add.graphics();
 		stambar.beginFill(0x0000FF);
 		stambar.drawRect(-20, -25, 40, 4);
 		stambar.endFill();
