@@ -1,6 +1,6 @@
 //initialize shit
 
-//camera size (gamesize = *3)
+//camera size (gamesize = *5)
 const	gamewidth = 720,
 		gameheight = 480,
 
@@ -43,15 +43,23 @@ const	gamewidth = 720,
 let game = new Phaser.Game(gamewidth, gameheight, Phaser.AUTO, '', { preload: preload, create: create, update: update }),
 	platforms,
 	swords,
-	shields;
+	shields,
+	swordslash,
+	swordpickup,
+	swordhitobj;
 
 function preload() {
 	
 	game.load.image('platform', 'images/platform.png');
-	game.load.spritesheet('player', 'images/player.png', spritesizew, spritesizeh);
 	game.load.image("test", "images/test.png");
 	game.load.image("sword", "images/sword1.png");
 	game.load.image("shield", "images/shield2.png");
+	
+	game.load.spritesheet('player', 'images/player.png', spritesizew, spritesizeh);
+	
+	game.load.audio('slash', 'sounds/swordslash.mp3');
+	game.load.audio('pickup', 'sounds/swordpickup.mp3');
+	game.load.audio('hitobj', 'sounds/swordhitobj.mp3');
 	
 }
 
@@ -134,6 +142,10 @@ function create() {
 		Phaser.Keyboard.P
 	]);
 	
+	swordslash = game.sound.add('slash');
+	swordpickup = game.sound.add('pickup');
+	swordhitobj = game.sound.add('hitobj');
+	
 	//show fps
 	game.time.advancedTiming = true;
 	let style = { font: "24px Arial", fill: "#fff" };
@@ -202,7 +214,8 @@ let playermovement = (player, leftkey, rightkey, upkey, downkey, attackkey, bloc
 	if(downkey.isDown && player.body.touching.down && player.curstate !== normalattack){
 		player.curstate = ducking;
 	}else if(attackkey.justPressed() && player.body.touching.down && player.sword !== 0 && player.curstate !== normalattack){
-			player.curstate = normalattack;	
+			player.curstate = normalattack;
+			swordslash.play();
 	}else if(player === player1 && leftkey.isDown && player.curstate !== normalattack){
 		player.body.velocity.x = -walkspeed;
 		if(player.curstate !== airattackdown){
@@ -239,6 +252,7 @@ let playermovement = (player, leftkey, rightkey, upkey, downkey, attackkey, bloc
 	
 	if(attackkey.justPressed() && !player.body.touching.down && player.sword !== 0){
 		player.curstate = airattackdown
+		swordslash.play();
 	}else if(player.body.velocity.y > 0 && !player.body.touching.down && player.curstate !== airattackdown){
 		player.curstate = falling;
 	}else if(player.body.velocity.y < 0 && !player.body.touching.down && player.curstate !== airattackdown){
@@ -337,25 +351,28 @@ let addweapontoplayer = (player, otherplayer) =>{
 		if(hitsword1 && otherplayer.sword !== 1){
 			player.sword = 1;
 			sword1.onplayer = player;
+			swordpickup.play();
 		}
 		
 		if(hitsword2 && otherplayer.sword !== 2){
 			player.sword = 2;
 			sword2.onplayer = player;
+			swordpickup.play();
 		}	
 		
 	}
 	
 	if(player.shield === 0){
-		
 		if(hitshield1 && otherplayer.shield !== 1){
 			player.shield = 1;
 			shield1.onplayer = player;
+			swordpickup.play();
 		}
 		
 		if(hitshield2 && otherplayer.shield !== 2){
 			player.shield = 2;
 			shield2.onplayer = player;
+			swordpickup.play();
 		}
 		
 	}
