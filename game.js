@@ -211,46 +211,43 @@ let movement = (player) => {
 
 let playermovement = (player, leftkey, rightkey, upkey, downkey, attackkey, blockkey) =>{
 	
-	switch(true){
-		case downkey.isDown && player.body.touching.down && player.curstate !== normalattack:
-						player.curstate = ducking;
-			break;
-		case attackkey.justPressed() && player.body.touching.down && player.sword !== 0 && player.curstate !== normalattack:
-						player.curstate = normalattack;
-						swordslash.play();
-			break;
-		case player === player1 && leftkey.isDown && player.curstate !== normalattack:
-						player.body.velocity.x = -walkspeed;
-						if(player.curstate !== airattackdown) player.curstate = walking;
-						switch(player.scale.x){case -playerscalew: player.scale.x = player.scale.x * -1; break; default: }
-			break;
-		case player === player2 && leftkey.isDown && player.x-(player.width/2) > game.camera.x && player.curstate !== normalattack:
-						player.body.velocity.x = -walkspeed;
-						if(player.curstate !== airattackdown) player.curstate = walking;
-						switch(player.scale.x){case -playerscalew: player.scale.x = player.scale.x * -1; break; default: }
-			break;
-		case player === player1 && rightkey.isDown && player.x-(player.width/2) < game.camera.x+game.camera.width && player.curstate !== normalattack:
-						player.body.velocity.x = walkspeed;
-						if(player.curstate !== airattackdown) player.curstate = walking;
-						switch(player.scale.x){case playerscalew: player.scale.x = player.scale.x * -1; break; default: }
-			break;
-		case player === player2 && rightkey.isDown && player.curstate !== normalattack:
-						player.body.velocity.x = walkspeed;
-						if(player.curstate !== airattackdown) player.curstate = walking;
-						switch(player.scale.x){case playerscalew: player.scale.x = player.scale.x * -1; break; default: }
-			break;
-		case blockkey.isDown && player.body.touching.down && player.shield !== 0 && player.curstate !== normalattack:
-						player.blocking = true;
-						player.curstam -= holdblockcost;
-						player.curstate = blocking;
-			break;
-		case player.curstam < player.maxstam/5 && player.body.touching.down && player.curstate !== normalattack:
-						player.curstate = exhaustedidle;
-			break;
-		case player.body.touching.down && player.curstate !== normalattack:
-						player.curstate = idle;
-			break;
-		default:	
+	if(downkey.isDown && player.body.touching.down && player.curstate !== normalattack){
+ 		player.curstate = ducking;
+ 	}else if(attackkey.justPressed() && player.body.touching.down && player.sword !== 0 && player.curstate !== normalattack){
+ 			player.curstate = normalattack;
+ 			swordslash.play();
+ 	}else if(player === player1 && leftkey.isDown && player.curstate !== normalattack){
+ 		player.body.velocity.x = -walkspeed;
+ 		if(player.curstate !== airattackdown){
+ 			player.curstate = walking;
+ 		}
+ 			switch(player.scale.x){case -playerscalew: player.scale.x = player.scale.x * -1; break; default: }
+ 	}else if(player === player2 && leftkey.isDown && player.x-(player.width/2) > game.camera.x && player.curstate !== normalattack){
+ 		player.body.velocity.x = -walkspeed;
+ 		if(player.curstate !== airattackdown){
+ 			player.curstate = walking;
+ 		}
+ 			switch(player.scale.x){case -playerscalew: player.scale.x = player.scale.x * -1; break; default: }
+ 	}else if(player === player1 && rightkey.isDown && player.x-(player.width/2) < game.camera.x+game.camera.width && player.curstate !== normalattack){
+ 		player.body.velocity.x = walkspeed;
+ 		if(player.curstate !== airattackdown){
+ 			player.curstate = walking;
+ 		}
+ 			switch(player.scale.x){case playerscalew: player.scale.x = player.scale.x * -1; break; default: }
+ 	}else if(player === player2 && rightkey.isDown && player.curstate !== normalattack){
+ 		player.body.velocity.x = walkspeed;
+ 		if(player.curstate !== airattackdown){
+ 			player.curstate = walking;
+ 		}
+ 			switch(player.scale.x){case playerscalew: player.scale.x = player.scale.x * -1; break; default: }
+ 	}else if(blockkey.isDown && player.body.touching.down && player.shield !== 0 && player.curstate !== normalattack){
+ 		player.blocking = true;
+ 		player.curstam -= holdblockcost;
+ 		player.curstate = blocking;
+ 	}else if(player.curstam < player.maxstam/5 && player.body.touching.down && player.curstate !== normalattack){
+ 		player.curstate = exhaustedidle;
+ 	}else if(player.body.touching.down && player.curstate !== normalattack){
+ 		player.curstate = idle;	
 	}
 	
 	if(attackkey.justPressed() && !player.body.touching.down && player.sword !== 0){
