@@ -1,6 +1,6 @@
 //initialize shit
 
-//camera size (gamesize = *5)
+//camera size (gamesize = *3)
 const	gamewidth = 720,
 		gameheight = 480,
 
@@ -40,13 +40,13 @@ const	gamewidth = 720,
 		falling = 8,
 		ducking = 9;	
 
-let game = new Phaser.Game(gamewidth, gameheight, Phaser.AUTO, '', { preload: preload, create: create, update: update }),
-	platforms,
-	swords,
-	shields,
-	swordslash,
-	swordpickup,
-	swordhitobj;
+let 	game = new Phaser.Game(gamewidth, gameheight, Phaser.AUTO, '', { preload: preload, create: create, update: update }),
+		platforms,
+		swords,
+		shields,
+		swordslash,
+		swordpickup,
+		swordhitobj;
 
 function preload() {
 	
@@ -166,8 +166,8 @@ function update() {
 		addweapontoplayer(player2, player1);
 		
 		//collide the player with the platforms
-		keepplayerupdated(player1);
-		keepplayerupdated(player2);
+		keepplayerupdated(player1, player2);
+		keepplayerupdated(player2, player1);
 		
 		updateweaponposition(player1);
 		updateweaponposition(player2);
@@ -186,13 +186,13 @@ function update() {
 
 
 
-let keepplayerupdated = (player) =>{
+let keepplayerupdated = (player, otherplayer) =>{
 	
 	player.body.velocity.x = 0; //resets velocity so it doesnt move forever
 		
 	movement(player); //handles movement
 	updatebars(player); //updates hp/stambar
-	playerstates(player); //handles current animation
+	playerstates(player, otherplayer); //handles current animation
 		
 }
 
@@ -269,7 +269,7 @@ let playermovement = (player, leftkey, rightkey, upkey, downkey, attackkey, bloc
 	
 }
 
-let playerstates = (player) => {
+let playerstates = (player, otherplayer) => {
 	//handles current player states attacking walking etc
 
 	switch (player.curstate){
@@ -278,8 +278,10 @@ let playerstates = (player) => {
 		case idle:				player.animations.play('idle');
 			break;
 		case normalattack:		player.animations.play('normalattack');
+								checkforhit(player, otherplayer, sword1, sword2);
 								player.animations.play('normalattack').onComplete.add(function () {
 									player.curstate = idle;
+									otherplayer.beenhit = false;
 								}, this);
 			break;
 		case blocking:			player.animations.play('blocking');
@@ -288,6 +290,7 @@ let playerstates = (player) => {
 			break;
 		case airattackdown:		player.animations.play('airattackdown');
 								player.body.setSize(spritesizew/Math.abs(player.scale.x), (spritesizeh/Math.abs(player.scale.y))/2, 0, player.height/2);
+								checkforhit(player, otherplayer, sword1, sword2);
 								player.animations.play('airattackdown').onComplete.add(function () {
 									player.curstate = idle;
 								}, this);
@@ -314,7 +317,6 @@ let playerstates = (player) => {
 		default: 				player.body.setSize(spritesizew/Math.abs(player.scale.x), spritesizeh/Math.abs(player.scale.y), 0, 0);
 	}
 	
-	
 }
 
 let updatebars = (player) => {
@@ -334,6 +336,44 @@ let updatebars = (player) => {
     if(player.curhp < 0){
 		player.curhp = 0; //dont go lower
    	}
+	
+}
+
+let checkforhit = (player, otherplayer, sword1, sword2) =>{
+	
+	if(sword1.onplayer.frame === 13){
+		sword1.body.checkCollision.none = false;
+		
+		let hitsword1 = game.physics.arcade.collide(otherplayer, sword1);
+		let hitsword3 = game.physics.arcade.collide(player, sword1);
+		
+		if(sword1.onplayer === player && hitsword1 && player.frame === 13 && !otherplayer.beenhit){
+			otherplayer.curhp -= 20;
+			otherplayer.beenhit = true;
+		}
+		
+		if(sword1.onplayer === otherplayer && hitsword3 && otherplayer.frame === 13 && !player.beenhit){
+			player.curhp -= 20;
+			player.beenhit = true;
+		}
+	}
+
+	if(sword2.onplayer.frame === 13){
+		sword2.body.checkCollision.none = false;
+		
+		let hitsword2 = game.physics.arcade.collide(otherplayer, sword2);
+		let hitsword4 = game.physics.arcade.collide(player, sword2);
+
+		if(sword2.onplayer === player && hitsword2 && player.frame === 13 && !otherplayer.beenhit){
+			otherplayer.curhp -= 20;
+			otherplayer.beenhit = true;
+		}
+		
+		if(sword2.onplayer === otherplayer && hitsword4 && otherplayer.frame === 13 && !player.beenhit){
+			player.curhp -= 20;
+			player.beenhit = true;
+		}
+	}
 	
 }
 
@@ -363,6 +403,7 @@ let addweapontoplayer = (player, otherplayer) =>{
 	}
 	
 	if(player.shield === 0){
+		
 		if(hitshield1 && otherplayer.shield !== 1){
 			player.shield = 1;
 			shield1.onplayer = player;
@@ -1142,6 +1183,8 @@ let addplayerstats = (player) =>{
 	
 	player.shield = 0;
 	player.sword = 0;
+	
+	player.beenhit = false;
 	
 	//animations
 	player.animations.add('left', [6, 7], 10, true);
