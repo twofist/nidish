@@ -250,7 +250,7 @@ let playermovement = (player, leftkey, rightkey, upkey, downkey, attackkey, bloc
  		player.curstate = idle;	
 	}
 	
-	if(attackkey.justPressed() && !player.body.touching.down && player.sword !== 0){
+	if(attackkey.justPressed() && !player.body.touching.down && player.sword !== 0 && player.curstate !== airattackdown){
 		player.curstate = airattackdown
 		swordslash.play();
 	}else if(player.body.velocity.y > 0 && !player.body.touching.down && player.curstate !== airattackdown){
@@ -263,7 +263,7 @@ let playermovement = (player, leftkey, rightkey, upkey, downkey, attackkey, bloc
 		player.blocking = false;
 	}
 	
-	if(upkey.isDown && player.body.touching.down && player.curstate !== normalattack){
+	if(upkey.isDown && player.body.touching.down && player.curstate !== normalattack && player.curstate !== airattackdown){
 		player.body.velocity.y = -jumpvelocity;
 	}	
 	
@@ -293,6 +293,7 @@ let playerstates = (player, otherplayer) => {
 								checkforhit(player, otherplayer, sword1, sword2);
 								player.animations.play('airattackdown').onComplete.add(function () {
 									player.curstate = idle;
+									otherplayer.beenhit = false;
 								}, this);
 			break;
 		case jumping:			player.animations.stop();
@@ -341,39 +342,51 @@ let updatebars = (player) => {
 
 let checkforhit = (player, otherplayer, sword1, sword2) =>{
 	
-	if(sword1.onplayer.frame === 13){
+	let hitsword1,
+		hitsword2;
+	
+	if((sword1.onplayer.frame >= 12  && sword1.onplayer.frame <= 15) || (sword1.onplayer.frame >= 16  && sword1.onplayer.frame <= 19)){
 		sword1.body.checkCollision.none = false;
 		
-		let hitsword1 = game.physics.arcade.collide(otherplayer, sword1);
-		let hitsword3 = game.physics.arcade.collide(player, sword1);
-		
-		if(sword1.onplayer === player && hitsword1 && player.frame === 13 && !otherplayer.beenhit){
-			otherplayer.curhp -= 20;
-			otherplayer.beenhit = true;
+		if(sword1.onplayer === player){
+			hitsword1 = game.physics.arcade.collide(otherplayer, sword1);
+		}else{
+			hitsword2 = game.physics.arcade.collide(player, sword1);
 		}
 		
-		if(sword1.onplayer === otherplayer && hitsword3 && otherplayer.frame === 13 && !player.beenhit){
-			player.curhp -= 20;
-			player.beenhit = true;
+		if(sword1.onplayer === player && hitsword1 && (player.frame === 14 || player.frame === 18) && !otherplayer.beenhit){
+			playergothit(otherplayer);
+		}
+		
+		if(sword1.onplayer === otherplayer && hitsword2 && (otherplayer.frame === 14 || otherplayer.frame === 18) && !player.beenhit){
+			playergothit(player);
 		}
 	}
 
-	if(sword2.onplayer.frame === 13){
+	if((sword2.onplayer.frame >= 12  && sword2.onplayer.frame <= 15) || (sword2.onplayer.frame >= 16  && sword2.onplayer.frame <= 19)){
 		sword2.body.checkCollision.none = false;
 		
-		let hitsword2 = game.physics.arcade.collide(otherplayer, sword2);
-		let hitsword4 = game.physics.arcade.collide(player, sword2);
+		if(sword2.onplayer === player){
+			hitsword1 = game.physics.arcade.collide(otherplayer, sword2);
+		}else{
+			hitsword2 = game.physics.arcade.collide(player, sword2);
+		}
 
-		if(sword2.onplayer === player && hitsword2 && player.frame === 13 && !otherplayer.beenhit){
-			otherplayer.curhp -= 20;
-			otherplayer.beenhit = true;
+		if(sword2.onplayer === player && hitsword1 && (player.frame === 14 || player.frame === 18) && !otherplayer.beenhit){
+			playergothit(otherplayer);
 		}
 		
-		if(sword2.onplayer === otherplayer && hitsword4 && otherplayer.frame === 13 && !player.beenhit){
-			player.curhp -= 20;
-			player.beenhit = true;
+		if(sword2.onplayer === otherplayer && hitsword2 && (otherplayer.frame === 14 || otherplayer.frame === 18) && !player.beenhit){
+			playergothit(player);
 		}
 	}
+	
+}
+
+let playergothit = (player) =>{
+	
+	player.curhp -= 20;
+	player.beenhit = true;
 	
 }
 
@@ -419,7 +432,6 @@ let addweapontoplayer = (player, otherplayer) =>{
 	}
 	
 }
-
 
 let updateweaponposition = (player) =>{
 	
