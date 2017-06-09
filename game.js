@@ -342,43 +342,36 @@ let updatebars = (player) => {
 
 let checkforhit = (player, otherplayer, sword1, sword2) =>{
 	
-	let hitsword1,
-		hitsword2;
+	let hitsword1;
 	
-	if((sword1.onplayer.frame >= 12  && sword1.onplayer.frame <= 15) || (sword1.onplayer.frame >= 16  && sword1.onplayer.frame <= 19)){
+	if((sword1.onplayer.frame >= 13  && sword1.onplayer.frame <= 14) || (sword1.onplayer.frame >= 17  && sword1.onplayer.frame <= 18)){
 		sword1.body.checkCollision.none = false;
 		
-		if(sword1.onplayer === player){
-			hitsword1 = game.physics.arcade.collide(otherplayer, sword1);
-		}else{
-			hitsword2 = game.physics.arcade.collide(player, sword1);
+		hitsword1 = game.physics.arcade.collide(otherplayer, sword1);
+
+		if(hitsword1 && !otherplayer.beenhit){
+			if(otherplayer.blocking && player.body.touching.down && player.scale.x !== otherplayer.scale.x){
+				playerblockedhit(otherplayer);
+			}else{
+				playergothit(otherplayer);
+			}
 		}
-		
-		if(sword1.onplayer === player && hitsword1 && (player.frame === 14 || player.frame === 18) && !otherplayer.beenhit){
-			playergothit(otherplayer);
-		}
-		
-		if(sword1.onplayer === otherplayer && hitsword2 && (otherplayer.frame === 14 || otherplayer.frame === 18) && !player.beenhit){
-			playergothit(player);
-		}
+
 	}
 
-	if((sword2.onplayer.frame >= 12  && sword2.onplayer.frame <= 15) || (sword2.onplayer.frame >= 16  && sword2.onplayer.frame <= 19)){
+	if((sword2.onplayer.frame >= 13  && sword2.onplayer.frame <= 14) || (sword2.onplayer.frame >= 17  && sword2.onplayer.frame <= 18)){
 		sword2.body.checkCollision.none = false;
-		
-		if(sword2.onplayer === player){
-			hitsword1 = game.physics.arcade.collide(otherplayer, sword2);
-		}else{
-			hitsword2 = game.physics.arcade.collide(player, sword2);
+
+		hitsword1 = game.physics.arcade.collide(otherplayer, sword2);
+
+		if(hitsword1 && !otherplayer.beenhit){
+			if(otherplayer.blocking && player.body.touching.down && player.scale.x !== otherplayer.scale.x){
+				playerblockedhit(otherplayer);
+			}else{
+				playergothit(otherplayer);
+			}
 		}
 
-		if(sword2.onplayer === player && hitsword1 && (player.frame === 14 || player.frame === 18) && !otherplayer.beenhit){
-			playergothit(otherplayer);
-		}
-		
-		if(sword2.onplayer === otherplayer && hitsword2 && (otherplayer.frame === 14 || otherplayer.frame === 18) && !player.beenhit){
-			playergothit(player);
-		}
 	}
 	
 }
@@ -386,6 +379,17 @@ let checkforhit = (player, otherplayer, sword1, sword2) =>{
 let playergothit = (player) =>{
 	
 	player.curhp -= 20;
+	player.beenhit = true;
+	
+}
+
+let playerblockedhit = (player) =>{
+	
+	player.blockedamount += 1;
+	if(player.blockedamount >= 3){
+		player.body.velocity.x = 1000;
+		player.blockedamount = 0;
+	}
 	player.beenhit = true;
 	
 }
@@ -1196,6 +1200,7 @@ let addplayerstats = (player) =>{
 	player.shield = 0;
 	player.sword = 0;
 	
+	player.blockedamount = 0;
 	player.beenhit = false;
 	
 	//animations
