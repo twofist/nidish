@@ -1,6 +1,6 @@
 //initialize shit
 
-//camera size (gamesize = *3)
+//camera size (gamesize = *5)
 const	gamewidth = 720,
 		gameheight = 480,
 
@@ -397,22 +397,22 @@ let playerblockedhit = (player) =>{
 
 
 let addweapontoplayer = (player, otherplayer) =>{
-	
+
 	let hitsword1 = game.physics.arcade.collide(player, sword1);
-	let hitsword2 = game.physics.arcade.collide(player, sword2);	
+	let hitsword2 = game.physics.arcade.collide(player, sword2);
 	let hitshield1 = game.physics.arcade.collide(player, shield1);
 	let hitshield2 = game.physics.arcade.collide(player, shield2);
 	
 	if (player.sword === 0){
-	
-		if(hitsword1 && otherplayer.sword !== 1){
-			player.sword = 1;
+		
+		if(hitsword1 && otherplayer.sword !== sword1){
+			player.sword = sword1;
 			sword1.onplayer = player;
 			swordpickup.play();
 		}
 		
-		if(hitsword2 && otherplayer.sword !== 2){
-			player.sword = 2;
+		if(hitsword2 && otherplayer.sword !== sword2){
+			player.sword = sword2;
 			sword2.onplayer = player;
 			swordpickup.play();
 		}	
@@ -421,14 +421,14 @@ let addweapontoplayer = (player, otherplayer) =>{
 	
 	if(player.shield === 0){
 		
-		if(hitshield1 && otherplayer.shield !== 1){
-			player.shield = 1;
+		if(hitshield1 && otherplayer.shield !== shield1){
+			player.shield = shield1;
 			shield1.onplayer = player;
 			swordpickup.play();
 		}
 		
-		if(hitshield2 && otherplayer.shield !== 2){
-			player.shield = 2;
+		if(hitshield2 && otherplayer.shield !== shield2){
+			player.shield = shield2;
 			shield2.onplayer = player;
 			swordpickup.play();
 		}
@@ -440,17 +440,17 @@ let addweapontoplayer = (player, otherplayer) =>{
 let updateweaponposition = (player) =>{
 	
 	switch(player.sword){
-		case 1:		setswordposition(player, sword1);
+		case sword1:	setswordposition(player, sword1);
 			break;
-		case 2:		setswordposition(player, sword2);
+		case sword2:	setswordposition(player, sword2);
 			break;
 		default:
 	}
 	
 	switch(player.shield){
-		case 1:		setshieldposition(player, shield1);
+		case shield1:		setshieldposition(player, shield1);
 			break;
-		case 2:		setshieldposition(player, shield2);
+		case shield2:		setshieldposition(player, shield2);
 			break;
 		default:
 	}
