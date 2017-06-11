@@ -165,7 +165,6 @@ function update() {
 		addweapontoplayer(player1, player2);
 		addweapontoplayer(player2, player1);
 		
-		//collide the player with the platforms
 		keepplayerupdated(player1, player2);
 		keepplayerupdated(player2, player1);
 		
@@ -187,13 +186,13 @@ function update() {
 
 
 let keepplayerupdated = (player, otherplayer) =>{
-	
+
 	player.body.velocity.x = 0; //resets velocity so it doesnt move forever
 		
 	movement(player); //handles movement
 	updatebars(player); //updates hp/stambar
 	playerstates(player, otherplayer); //handles current animation
-		
+
 }
 
 let movement = (player) => {
@@ -278,7 +277,7 @@ let playerstates = (player, otherplayer) => {
 		case idle:				player.animations.play('idle');
 			break;
 		case normalattack:		player.animations.play('normalattack');
-								checkforhit(player, otherplayer, sword1, sword2);
+								checkforhit(player, otherplayer);
 								player.animations.play('normalattack').onComplete.add(function () {
 									player.curstate = idle;
 									otherplayer.beenhit = false;
@@ -340,7 +339,7 @@ let updatebars = (player) => {
 	
 }
 
-let checkforhit = (player, otherplayer, sword1, sword2) =>{
+let checkforhit = (player, otherplayer) =>{
 	
 	let hitsword1;
 	
@@ -383,14 +382,44 @@ let playergothit = (player) =>{
 	
 }
 
-let playerblockedhit = (player) =>{
-	
-	player.blockedamount += 1;
-	if(player.blockedamount >= 3){
-		player.body.velocity.x = 1000;
-		player.blockedamount = 0;
+let playerblockedhit = (otherplayer) =>{
+
+	otherplayer.blockedamount += 1;
+	if(otherplayer.blockedamount >= 3){
+		switch(otherplayer.scale.x){
+			case -playerscalew: swordknocked(otherplayer, -playerscalew);
+				break;
+			case playerscalew:	swordknocked(otherplayer, playerscalew);
+				break;
+			default:
+		}
+		otherplayer.blockedamount = 0;
 	}
-	player.beenhit = true;
+	otherplayer.beenhit = true;
+	
+}
+
+let swordknocked = (otherplayer, playerscalew) =>{
+	
+	otherplayer.body.velocity.x = -1000;
+	
+	if(otherplayer.sword !== 0){
+		let thesword = otherplayer.sword;
+		otherplayer.sword.onplayer = 0;
+		otherplayer.sword = 0;
+		thesword.flying = true;
+		thesword.body.velocity.y = -750;
+	}
+	
+	if(otherplayer.shield !== 0){
+		let theshield = otherplayer.shield;
+		otherplayer.shield.onplayer = 0;
+		otherplayer.shield = 0;
+		theshield.flying = true;
+		theshield.x = otherplayer.x + (otherplayer.width + 20 * playerscalew);
+		theshield.body.velocity.y = -400;
+		theshield.body.velocity.x = 300 * playerscalew;
+	}
 	
 }
 
@@ -1133,6 +1162,10 @@ let setshieldducking = (player, shield) =>{
 
 let removecollisionifinhand = (handobject) =>{
 	
+	if(handobject.body.touching.down){
+		handobject.flying = false;
+	}
+	
 	if(handobject.onplayer === player1 || handobject.onplayer === player2){
 		handobject.body.checkCollision.none = true;
 		handobject.body.allowGravity = false;
@@ -1141,7 +1174,7 @@ let removecollisionifinhand = (handobject) =>{
 		handobject.body.allowGravity = true;
 	}
 	
-	if(handobject.body.allowGravity === true){
+	if(handobject.body.allowGravity === true && !handobject.flying){
 		handobject.body.velocity.x = 0;
 	}else if(handobject.onplayer === player1){
 		handobject.body.velocity.x = player1.body.velocity.x;
@@ -1244,5 +1277,6 @@ let addweaponstats = (weapon) => {
 	weapon.body.collideWorldBounds = true;
 	
 	weapon.onplayer = 0;
+	weapon.flying = false;
 	
 }
