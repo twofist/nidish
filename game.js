@@ -1162,6 +1162,10 @@ let setshieldducking = (player, shield) =>{
 
 let removecollisionifinhand = (handobject) =>{
 	
+	if(handobject.flying){
+		handobject.angle += 10;
+	}
+	
 	if(handobject.body.touching.down){
 		handobject.flying = false;
 	}
