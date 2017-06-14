@@ -141,7 +141,7 @@ function create() {
 		Phaser.Keyboard.O,
 		Phaser.Keyboard.P
 	]);
-	
+
 	swordslash = game.sound.add('slash');
 	swordpickup = game.sound.add('pickup');
 	swordhitobj = game.sound.add('hitobj');
@@ -157,7 +157,7 @@ function create() {
 }
 
 function update() {
-		
+
 		let swordplatform = game.physics.arcade.collide(swords, platforms);
 		let shieldplatform = game.physics.arcade.collide(shields, platforms);
 		let hitPlayer = game.physics.arcade.collide(player1, player2);
@@ -175,6 +175,9 @@ function update() {
 		removecollisionifinhand(sword2);
 		removecollisionifinhand(shield1);
 		removecollisionifinhand(shield2);
+		
+		checkforfallingsword(player1, sword1, sword2);
+		checkforfallingsword(player2, sword1, sword2);
 		
 		//check if player goes outside the camera
 		checkforscene(player1, player2);
@@ -214,7 +217,7 @@ let playermovement = (player, leftkey, rightkey, upkey, downkey, attackkey, bloc
  		player.curstate = ducking;
  	}else if(attackkey.justPressed() && player.body.touching.down && player.sword !== 0 && player.curstate !== normalattack){
  			player.curstate = normalattack;
- 			swordslash.play();
+			swordslash.play();
  	}else if(player === player1 && leftkey.isDown && player.curstate !== normalattack){
  		player.body.velocity.x = -walkspeed;
  		if(player.curstate !== airattackdown){
@@ -341,14 +344,14 @@ let updatebars = (player) => {
 
 let checkforhit = (player, otherplayer) =>{
 	
-	let hitsword1;
+	let hitsword;
 	
 	if((sword1.onplayer.frame >= 13  && sword1.onplayer.frame <= 14) || (sword1.onplayer.frame >= 17  && sword1.onplayer.frame <= 18)){
 		sword1.body.checkCollision.none = false;
 		
-		hitsword1 = game.physics.arcade.collide(otherplayer, sword1);
+		hitsword = game.physics.arcade.collide(otherplayer, sword1);
 
-		if(hitsword1 && !otherplayer.beenhit){
+		if(hitsword && !otherplayer.beenhit && sword1.onplayer === player){
 			if(otherplayer.blocking && player.body.touching.down && player.scale.x !== otherplayer.scale.x){
 				playerblockedhit(otherplayer);
 			}else{
@@ -361,9 +364,9 @@ let checkforhit = (player, otherplayer) =>{
 	if((sword2.onplayer.frame >= 13  && sword2.onplayer.frame <= 14) || (sword2.onplayer.frame >= 17  && sword2.onplayer.frame <= 18)){
 		sword2.body.checkCollision.none = false;
 
-		hitsword1 = game.physics.arcade.collide(otherplayer, sword2);
+		hitsword = game.physics.arcade.collide(otherplayer, sword2);
 
-		if(hitsword1 && !otherplayer.beenhit){
+		if(hitsword && !otherplayer.beenhit && sword2.onplayer === player){
 			if(otherplayer.blocking && player.body.touching.down && player.scale.x !== otherplayer.scale.x){
 				playerblockedhit(otherplayer);
 			}else{
@@ -387,21 +390,22 @@ let playerblockedhit = (otherplayer) =>{
 	otherplayer.blockedamount += 1;
 	if(otherplayer.blockedamount >= 3){
 		switch(otherplayer.scale.x){
-			case -playerscalew: swordknocked(otherplayer, -playerscalew);
+			case -playerscalew: outofblocks(otherplayer, -playerscalew);
 				break;
-			case playerscalew:	swordknocked(otherplayer, playerscalew);
+			case playerscalew:	outofblocks(otherplayer, playerscalew);
 				break;
 			default:
 		}
 		otherplayer.blockedamount = 0;
 	}
 	otherplayer.beenhit = true;
+	swordhitobj.play();
 	
 }
 
-let swordknocked = (otherplayer, playerscalew) =>{
+let outofblocks = (otherplayer, wichside) =>{
 	
-	otherplayer.body.velocity.x = -1000;
+	otherplayer.body.velocity.x = 1000 * wichside;
 	
 	if(otherplayer.sword !== 0){
 		let thesword = otherplayer.sword;
@@ -409,6 +413,7 @@ let swordknocked = (otherplayer, playerscalew) =>{
 		otherplayer.sword = 0;
 		thesword.flying = true;
 		thesword.body.velocity.y = -750;
+		game.time.events.add(200, canhitplayer, this, thesword);
 	}
 	
 	if(otherplayer.shield !== 0){
@@ -416,9 +421,32 @@ let swordknocked = (otherplayer, playerscalew) =>{
 		otherplayer.shield.onplayer = 0;
 		otherplayer.shield = 0;
 		theshield.flying = true;
-		theshield.x = otherplayer.x + (otherplayer.width + 20 * playerscalew);
+		theshield.x = otherplayer.x + (otherplayer.width + 20 * wichside);
 		theshield.body.velocity.y = -400;
-		theshield.body.velocity.x = 300 * playerscalew;
+		theshield.body.velocity.x = 300 * wichside;
+	}
+	
+}
+
+let canhitplayer = (sword) =>{
+	
+	sword.hittheplayer = true;
+	
+}
+
+let checkforfallingsword = (player, sword1, sword2) =>{
+	
+	let test1 = game.physics.arcade.collide(player, sword1);
+	let test2 = game.physics.arcade.collide(player, sword2);
+	
+	if(sword1.hittheplayer && test1){
+		player.curhp -= 20;
+		sword1.hittheplayer = false;
+	}
+	
+	if(sword2.hittheplayer && test2){
+		player.curhp -= 20;
+		sword2.hittheplayer = false;
 	}
 	
 }
@@ -1168,6 +1196,7 @@ let removecollisionifinhand = (handobject) =>{
 	
 	if(handobject.body.touching.down){
 		handobject.flying = false;
+		handobject.canhitplayer = false;
 	}
 	
 	if(handobject.onplayer === player1 || handobject.onplayer === player2){
@@ -1282,5 +1311,6 @@ let addweaponstats = (weapon) => {
 	
 	weapon.onplayer = 0;
 	weapon.flying = false;
+	weapon.hittheplayer = false;
 	
 }
