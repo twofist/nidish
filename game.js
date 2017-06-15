@@ -213,6 +213,8 @@ let movement = (player) => {
 
 let playermovement = (player, leftkey, rightkey, upkey, downkey, attackkey, blockkey) =>{
 	
+	let blockamounttimer;
+	
 	if(downkey.isDown && player.body.touching.down && player.curstate !== normalattack){
  		player.curstate = ducking;
  	}else if(attackkey.justPressed() && player.body.touching.down && player.sword !== 0 && player.curstate !== normalattack){
@@ -246,6 +248,7 @@ let playermovement = (player, leftkey, rightkey, upkey, downkey, attackkey, bloc
  		player.blocking = true;
  		player.curstam -= holdblockcost;
  		player.curstate = blocking;
+		game.time.events.remove(blockamounttimer);
  	}else if(player.curstam < player.maxstam/5 && player.body.touching.down && player.curstate !== normalattack){
  		player.curstate = exhaustedidle;
  	}else if(player.body.touching.down && player.curstate !== normalattack){
@@ -261,8 +264,9 @@ let playermovement = (player, leftkey, rightkey, upkey, downkey, attackkey, bloc
 		player.curstate = jumping;
 	}
 	
-	if(!blockkey.isDown && player.blocking){
+	if(blockkey.justReleased() || player.shield === 0){
 		player.blocking = false;
+		blockamounttimer = game.time.events.add(500, resetblockamount, this, player);
 	}
 	
 	if(upkey.isDown && player.body.touching.down && player.curstate !== normalattack && player.curstate !== airattackdown){
@@ -396,7 +400,7 @@ let playerblockedhit = (otherplayer) =>{
 				break;
 			default:
 		}
-		otherplayer.blockedamount = 0;
+		resetblockamount(otherplayer);
 	}
 	otherplayer.beenhit = true;
 	swordhitobj.play();
@@ -425,6 +429,12 @@ let outofblocks = (otherplayer, wichside) =>{
 		theshield.body.velocity.y = -400;
 		theshield.body.velocity.x = 300 * wichside;
 	}
+	
+}
+
+let resetblockamount = (player) =>{
+	
+	player.blockedamount = 0;
 	
 }
 
