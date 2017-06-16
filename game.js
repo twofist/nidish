@@ -50,6 +50,18 @@ let 	game = new Phaser.Game(gamewidth, gameheight, Phaser.AUTO, '', { preload: p
 
 function preload() {
 	
+	text = game.add.text(game.camera.x, game.camera.height/2, 'loading...', { fill: '#ffffff' });
+	game.load.onLoadStart.add(loadingstart, this);
+	
+	game.load.image('platform', 'images/platform.png');
+
+	game.load.onFileComplete.add(filecomplete, this);
+	game.load.onLoadComplete.add(loadingcomplete, this);
+	
+}
+
+let loadingstart = () =>{
+	
 	game.load.image('platform', 'images/platform.png');
 	game.load.image("test", "images/test.png");
 	game.load.image("sword", "images/sword1.png");
@@ -63,9 +75,21 @@ function preload() {
 	
 }
 
+let filecomplete = (progress, cacheKey, success, totalLoaded, totalFiles) =>{
+	
+	text.setText("File Complete: " + progress + "% - " + totalLoaded + " out of " + totalFiles);
+	
+}
+
+let loadingcomplete = () =>{
+	
+	text.setText("Load Complete");
+	
+}
+
 function create() {
 	
-	game.world.setBounds(0, 0, game.width*5, gameheight);
+	game.world.setBounds(0, 0, gamewidth*5, gameheight);
 
 	 //enable physics system
     game.physics.startSystem(Phaser.Physics.ARCADE);
