@@ -77,7 +77,7 @@ let loadingstart = () =>{
 
 let filecomplete = (progress, cacheKey, success, totalLoaded, totalFiles) =>{
 	
-	text.setText("File Complete: " + progress + "% - " + totalLoaded + " out of " + totalFiles);
+	text.setText("File Complete:", progress, "% -", totalLoaded, "out of", totalFiles);
 	
 }
 
