@@ -38,9 +38,14 @@ const	gamewidth = 720,
 		airattackdown = 6,
 		jumping = 7,
 		falling = 8,
-		ducking = 9;	
+		ducking = 9;
+		
+//gamestate
+		ingame = 2;
+		inmenu = 1;
 
 let 	game = new Phaser.Game(gamewidth, gameheight, Phaser.AUTO, '', { preload: preload, create: create, update: update }),
+		gamestate,
 		platforms,
 		swords,
 		shields,
@@ -48,6 +53,11 @@ let 	game = new Phaser.Game(gamewidth, gameheight, Phaser.AUTO, '', { preload: p
 		swordpickup,
 		swordhitobj;
 
+let 	textanimation,
+		nidish,
+		playgame,
+		github;
+		
 function preload() {
 	
 	text = game.add.text(game.camera.x, game.camera.height/2, 'loading...', { fill: '#ffffff' });
@@ -73,6 +83,8 @@ let loadingstart = () =>{
 	game.load.audio('pickup', 'sounds/swordpickup.mp3');
 	game.load.audio('hitobj', 'sounds/swordhitobj.mp3');
 	
+	game.load.spritesheet("nyan", "images/menuanimation/nyan.png", 100, 30);
+	
 }
 
 let filecomplete = (progress, cacheKey, success, totalLoaded, totalFiles) =>{
@@ -87,27 +99,86 @@ let loadingcomplete = () =>{
 	
 }
 
+
+
 function create() {
+	
+	text.destroy();
+	gamestate = inmenu;
+	
+	game.world.setBounds(0, 0, gamewidth, gameheight);
+	game.stage.backgroundColor = "#243e36";
+	
+	textanimation = game.add.sprite(0, 160, 'nyan');
+	textanimation.animations.add('shiny', [1,2,3,4,5,6,7,8,9,10,11,12], 20, true);
+	textanimation.visible = false;
+	
+	textinit();
+	
+}
+
+function textinit(){
+	
+	nidish = game.add.text(gamewidth/2-160, 0, "Nidish", { font: "80px Courier New", fill: "#c2a83e", align: "center" });
+	
+	playgame = game.add.text(0, 100, "Play", { font: "65px Courier New", fill: "#c2a83e", align: "center" });
+	
+	github = game.add.text(0, 250, "Github", { font: "65px Courier New", fill: "#c2a83e", align: "center" });
+
+	enableinput(playgame);
+	enableinput(github);
+	
+}
+
+function enableinput(item){
+	
+	item.inputEnabled = true;
+
+    item.events.onInputOver.add(over, this);
+    item.events.onInputUp.add(up, this);
+	
+}
+
+function over(item) {
+	
+	textanimation.width = item.width;
+	textanimation.animations.play("shiny");
+	textanimation.visible = true;
+	textanimation.y = item.y + 30 -10;
+	
+}
+
+function up(item) {
+
+    if(item === playgame){
+		gamestate = ingame;
+		startthegame();
+	}else if(item === github){
+		location.href = "http://www.github.com/twofist";
+	}
+	
+}
+
+function startthegame(){
 	
 	game.world.setBounds(0, 0, gamewidth*5, gameheight);
 
-	 //enable physics system
-    game.physics.startSystem(Phaser.Physics.ARCADE);
+	//enable physics system
+	game.physics.startSystem(Phaser.Physics.ARCADE);
 
-    //make platforms a group
-    platforms = game.add.group();
+	//make platforms a group
+	platforms = game.add.group();
+	//enable physics for every object in the group
+	platforms.enableBody = true;
 
-    //enable physics for every object in the group
-    platforms.enableBody = true;
+	//create ground
+	let ground = platforms.create(0, game.world.height - 64, 'platform');
 
-    //create ground
-    let ground = platforms.create(0, game.world.height - 64, 'platform');
+	//scale it to fit the game size
+	ground.scale.setTo(9, 1);
 
-    //scale it to fit the game size
-    ground.scale.setTo(9, 1);
-
-    //make it not fall when you jump on it
-    ground.body.immovable = true;
+	//make it not fall when you jump on it
+	ground.body.immovable = true;
 	
 	//set camera
 	game.camera.x = (game.world.width/2) - (game.width/2);
@@ -116,10 +187,10 @@ function create() {
 	let rightside = game.camera.x + game.camera.width - (game.camera.width/4);
 	
 	// The player and its settings
-    player1 = game.add.sprite(rightside, game.world.height/2, 'player');
+	player1 = game.add.sprite(rightside, game.world.height/2, 'player');
 	
 	player2 = game.add.sprite(leftside, game.world.height/2, 'player');
-		
+	
 		addplayerstats(player1);
 		addplayerstats(player2);
 	
@@ -134,12 +205,13 @@ function create() {
 	shield1 = shields.create(rightside + 50, game.world.height/2, "shield");
 	shield2 = shields.create(leftside + 50, game.world.height/2, "shield");
 	
-	addweaponstats(shield1);
-	addweaponstats(shield2);
-	addweaponstats(sword1);
-	addweaponstats(sword2);
-	
+		addweaponstats(shield1);
+		addweaponstats(shield2);
+		addweaponstats(sword1);
+		addweaponstats(sword2);
+		
 	cursors = game.input.keyboard.createCursorKeys();
+	
 	wasd = game.input.keyboard.addKeys( { 
 		'up': Phaser.KeyCode.W, 
 		'down': Phaser.KeyCode.S, 
@@ -165,10 +237,10 @@ function create() {
 		Phaser.Keyboard.O,
 		Phaser.Keyboard.P
 	]);
-
-	swordslash = game.sound.add('slash');
-	swordpickup = game.sound.add('pickup');
-	swordhitobj = game.sound.add('hitobj');
+	
+		swordslash = game.sound.add('slash');
+		swordpickup = game.sound.add('pickup');
+		swordhitobj = game.sound.add('hitobj');
 	
 	//show fps
 	game.time.advancedTiming = true;
@@ -182,6 +254,8 @@ function create() {
 
 function update() {
 
+	switch(gamestate){
+	  case ingame:
 		let swordplatform = game.physics.arcade.collide(swords, platforms);
 		let shieldplatform = game.physics.arcade.collide(shields, platforms);
 		let hitPlayer = game.physics.arcade.collide(player1, player2);
@@ -206,7 +280,10 @@ function update() {
 		//check if player goes outside the camera
 		checkforscene(player1, player2);
 	
-	text.setText("FPS: " +game.time.fps);
+		text.setText("FPS: " +game.time.fps);
+	break;
+	default:
+	}
 
 }
 
