@@ -365,7 +365,7 @@ let playermovement = (player, leftkey, rightkey, upkey, downkey, attackkey, bloc
 		player.curstate = jumping;
 	}
 	
-	if(blockkey.justReleased() || player.shield === 0){
+	if(player.shield === 0 || player.curstate !== blocking){
 		player.blocking = false;
 		blockamounttimer = game.time.events.add(500, resetblockamount, this, player);
 	}
