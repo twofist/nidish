@@ -161,6 +161,11 @@ function up(item) {
 
 function startthegame(){
 	
+	textanimation.destroy();
+	nidish.destroy();
+	playgame.destroy();
+	github.destroy();
+
 	game.world.setBounds(0, 0, gamewidth*5, gameheight);
 
 	//enable physics system
