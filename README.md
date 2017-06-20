@@ -7,17 +7,17 @@ nidish gaem
 
 ## how to play    
 1. player 1    
--W = jump    
--A = left    
--S = duck   
--D = right   
--Z = attack    
--T = blocking    
+- W = jump    
+- A = left    
+- S = duck   
+- D = right   
+- Z = attack    
+- T = blocking    
     
 2. player 2    
--Up Arrow = jump    
--Left Arrow = left    
--Down Arrow = duck    
--Right Arrow = right    
--O = attack    
--P = blocking    
+- Up Arrow = jump    
+- Left Arrow = left    
+- Down Arrow = duck    
+- Right Arrow = right    
+- O = attack    
+- P = blocking    
