@@ -14,6 +14,7 @@ nidish gaem
 - Z = attack    
 - T = blocking    
     
+    
 2. player 2    
 - Up Arrow = jump    
 - Left Arrow = left    
