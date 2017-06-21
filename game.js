@@ -225,7 +225,9 @@ function startthegame(){
 		'Zkey': Phaser.KeyCode.Z, //p2 attack
 		'Tkey': Phaser.KeyCode.T, //p2 block
 		'Okey': Phaser.KeyCode.O, //p1 attack
-		'Pkey': Phaser.KeyCode.P  //p1 block
+		'Pkey': Phaser.KeyCode.P,  //p1 block
+		'Ikey': Phaser.KeyCode.I,  //p2 throw
+		'Rkey': Phaser.KeyCode.R  //p1 throw
 	} );
 	
 	game.input.keyboard.addKeyCapture([
@@ -240,7 +242,9 @@ function startthegame(){
 		Phaser.Keyboard.Z,
 		Phaser.Keyboard.T,
 		Phaser.Keyboard.O,
-		Phaser.Keyboard.P
+		Phaser.Keyboard.P,
+		Phaser.Keyboard.I,
+		Phaser.Keyboard.R
 	]);
 	
 		swordslash = game.sound.add('slash');
@@ -309,19 +313,21 @@ let movement = (player) => {
 	let hitPlatform = game.physics.arcade.collide(player, platforms);
 
 	if(player === player1){
-		playermovement(player, cursors.left, cursors.right, cursors.up, cursors.down, wasd.Okey, wasd.Pkey);
+		playermovement(player, cursors.left, cursors.right, cursors.up, cursors.down, wasd.Okey, wasd.Pkey, wasd.Ikey);
 	}
 	if (player === player2){
-		playermovement(player, wasd.left, wasd.right, wasd.up, wasd.down, wasd.Zkey, wasd.Tkey);
+		playermovement(player, wasd.left, wasd.right, wasd.up, wasd.down, wasd.Zkey, wasd.Tkey, wasd.Rkey);
 	}
 	
 }
 
-let playermovement = (player, leftkey, rightkey, upkey, downkey, attackkey, blockkey) =>{
+let playermovement = (player, leftkey, rightkey, upkey, downkey, attackkey, blockkey, throwkey) =>{
 	
 	let blockamounttimer;
 	
-	if(downkey.isDown && player.body.touching.down && player.curstate !== normalattack){
+	if(throwkey.justPressed() && player.curstate !== normalattack && player.curstate !== airattackdown && player.sword !== 0){
+		throwthesword(player);
+	}else if(downkey.isDown && player.body.touching.down && player.curstate !== normalattack){
  		player.curstate = ducking;
  	}else if(attackkey.justPressed() && player.body.touching.down && player.sword !== 0 && player.curstate !== normalattack){
  			player.curstate = normalattack;
@@ -564,6 +570,32 @@ let checkforfallingsword = (player, sword1, sword2) =>{
 		player.curhp -= 20;
 		sword2.hittheplayer = false;
 	}
+	
+}
+
+let throwthesword = (player) =>{
+	
+	let thesword = player.sword;
+		player.sword.onplayer = 0;
+		player.sword = 0;
+		thesword.flying = true;
+		thesword.body.velocity.y = -350;
+		switch(player.scale.x){
+			case -playerscalew: throwdirection(player, thesword, -playerscalew);
+				break;
+			case playerscalew:	throwdirection(player, thesword, playerscalew);
+				break;
+			default:
+		}
+
+		game.time.events.add(100, canhitplayer, this, thesword);
+	
+}
+
+let throwdirection = (player, thesword, wichside) =>{
+	
+	thesword.x = (player.x + (player.width + 20 * -wichside));
+	thesword.body.velocity.x = 300 * -wichside;
 	
 }
 
