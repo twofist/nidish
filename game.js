@@ -529,7 +529,7 @@ let outofblocks = (otherplayer, wichside) =>{
 		otherplayer.sword = 0;
 		thesword.flying = true;
 		thesword.body.velocity.y = -750;
-		game.time.events.add(200, canhitplayer, this, thesword);
+		game.time.events.add(100, canhitplayer, this, thesword);
 	}
 	
 	if(otherplayer.shield !== 0){
@@ -587,14 +587,14 @@ let throwthesword = (player) =>{
 				break;
 			default:
 		}
-
+		
 		game.time.events.add(100, canhitplayer, this, thesword);
 	
 }
 
 let throwdirection = (player, thesword, wichside) =>{
 	
-	thesword.x = (player.x + (player.width + 20 * -wichside));
+	thesword.x = player.x - (player.width + 20 * -wichside);
 	thesword.body.velocity.x = 300 * -wichside;
 	
 }
@@ -1344,12 +1344,13 @@ let removecollisionifinhand = (handobject) =>{
 	
 	if(handobject.body.touching.down){
 		handobject.flying = false;
-		handobject.canhitplayer = false;
 	}
 	
 	if(handobject.onplayer === player1 || handobject.onplayer === player2){
 		handobject.body.checkCollision.none = true;
 		handobject.body.allowGravity = false;
+		handobject.flying = false;
+		handobject.hittheplayer = false;
 	}else{
 		handobject.body.checkCollision.none = false;
 		handobject.body.allowGravity = true;
