@@ -3,7 +3,7 @@ nidish gaem
 
 
 ## work in progress    
-### try it here https://twofist.github.io/nidish/ or here https://twofist.info/nidish.html 
+### try it here https://twofist.github.io/nidish/ or here https://twofist.info/nidish 
 
 ## how to play    
 1. player 1    
