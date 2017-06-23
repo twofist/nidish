@@ -18,16 +18,11 @@ const	gamewidth = 720,
 		
 		playergravity = 1250,
 		
-		maximumhp = 50,
-		maximumstam = 50,
+		maximumhp = 20,
 		
 		walkspeed = 200,
 		
 		jumpvelocity = 400,
-		
-		holdblockcost = 0.2,
-		
-		regenstam = 0.03,
 
 //playeranimationstate
 		walking = 1,
@@ -39,6 +34,7 @@ const	gamewidth = 720,
 		jumping = 7,
 		falling = 8,
 		ducking = 9;
+		dead = 10;
 		
 //gamestate
 		ingame = 2;
@@ -303,7 +299,7 @@ let keepplayerupdated = (player, otherplayer) =>{
 	player.body.velocity.x = 0; //resets velocity so it doesnt move forever
 		
 	movement(player); //handles movement
-	updatebars(player); //updates hp/stambar
+	updatebars(player); //handle hp/death
 	playerstates(player, otherplayer); //handles current animation
 
 }
@@ -358,11 +354,10 @@ let playermovement = (player, leftkey, rightkey, upkey, downkey, attackkey, bloc
  			switch(player.scale.x){case playerscalew: player.scale.x = player.scale.x * -1; break; default: }
  	}else if(blockkey.isDown && player.body.touching.down && player.shield !== 0 && player.curstate !== normalattack){
  		player.blocking = true;
- 		player.curstam -= holdblockcost;
  		player.curstate = blocking;
 		game.time.events.remove(blockamounttimer);
- 	}else if(player.curstam < player.maxstam/5 && player.body.touching.down && player.curstate !== normalattack){
- 		player.curstate = exhaustedidle;
+ 	//}else if(player.body.touching.down && player.curstate !== normalattack){
+ 	//	player.curstate = exhaustedidle;
  	}else if(player.body.touching.down && player.curstate !== normalattack){
  		player.curstate = idle;	
 	}
@@ -424,6 +419,10 @@ let playerstates = (player, otherplayer) => {
 								player.body.setSize(spritesizew/Math.abs(player.scale.x), (spritesizeh/Math.abs(player.scale.y))/2, 0, player.height/2);
 								player.frame = 20;
 			break;
+		case dead:				player.animations.play('deadanimation').onComplete.add(function () {
+									player.respawn();
+								}, this);
+			break;
 		default: 				player.animations.stop();
 								player.frame = 0;
 	}
@@ -439,21 +438,9 @@ let playerstates = (player, otherplayer) => {
 }
 
 let updatebars = (player) => {
-	
-	player.hpbar.width = player.curhp;
-	player.stambar.width = player.curstam;
-	
-	if(player.curstam < player.maxstam){
-		player.curstam += regenstam; //add stam per frame
-	}
-	if(player.curstam > player.maxstam){
-		player.curstam = player.maxstam; //dont go over
-	}
-	if(player.curstam < 0){
-		player.curstam = 0; //dont go lower
-	}
+
     if(player.curhp < 0){
-		player.curhp = 0; //dont go lower
+		player.curstate = dead;
    	}
 	
 }
@@ -562,14 +549,19 @@ let checkforfallingsword = (player, sword1, sword2) =>{
 	let test2 = game.physics.arcade.collide(player, sword2);
 	
 	if(sword1.hittheplayer && test1){
-		player.curhp -= 20;
-		sword1.hittheplayer = false;
+		playertakesdamage(player, sword1);
 	}
 	
 	if(sword2.hittheplayer && test2){
-		player.curhp -= 20;
-		sword2.hittheplayer = false;
+		playertakesdamage(player, sword2);
 	}
+	
+}
+
+let playertakesdamage = (player, sword) => {
+	
+	player.curhp -= 20;
+	sword.hittheplayer = false;
 	
 }
 
@@ -611,15 +603,11 @@ let addweapontoplayer = (player, otherplayer) =>{
 	if (player.sword === 0){
 		
 		if(hitsword1 && otherplayer.sword !== sword1){
-			player.sword = sword1;
-			sword1.onplayer = player;
-			swordpickup.play();
+			handlepickupweapon(player, sword1);
 		}
 		
 		if(hitsword2 && otherplayer.sword !== sword2){
-			player.sword = sword2;
-			sword2.onplayer = player;
-			swordpickup.play();
+			handlepickupweapon(player, sword2);
 		}	
 		
 	}
@@ -627,18 +615,30 @@ let addweapontoplayer = (player, otherplayer) =>{
 	if(player.shield === 0){
 		
 		if(hitshield1 && otherplayer.shield !== shield1){
-			player.shield = shield1;
-			shield1.onplayer = player;
-			swordpickup.play();
+			handlepickupweapon(player, shield1);
 		}
 		
 		if(hitshield2 && otherplayer.shield !== shield2){
-			player.shield = shield2;
-			shield2.onplayer = player;
-			swordpickup.play();
+			handlepickupweapon(player, shield2);
 		}
 		
 	}
+	
+}
+
+let handlepickupweapon = (player, object) =>{
+	
+	if(shields.children.indexOf(object) > -1){
+		player.shield = object;
+		object.onplayer = player;
+	}
+	
+	if(swords.children.indexOf(object) > -1){
+		player.sword = object;
+		object.onplayer = player;
+	}
+	
+	swordpickup.play();
 	
 }
 
@@ -1407,16 +1407,27 @@ let addplayerstats = (player) =>{
 	player.body.collideWorldBounds = true;
 	
 	player.maxhp = maximumhp;
-	player.maxstam = maximumstam;
-	
 	player.curhp = player.maxhp;
-	player.curstam = player.maxstam;
 	
 	player.shield = 0;
 	player.sword = 0;
 	
 	player.blockedamount = 0;
 	player.beenhit = false;
+	
+	player.respawn = function(){
+		
+		if(player === player1){
+			let rightside = game.camera.x + game.camera.width - (game.camera.width/4);
+			resetplayerpos(player, rightside);
+		}else if(player === player2){
+			let leftside = game.camera.x + (game.camera.width/4);
+			resetplayerpos(player, leftside);			
+		}
+		
+		player.curhp = maximumhp;
+		
+	}
 	
 	//animations
 	player.animations.add('left', [6, 7], 10, true);
@@ -1428,21 +1439,15 @@ let addplayerstats = (player) =>{
 	player.animations.add('exhaustedidle', [3, 4], 1, true);
 	player.animations.add('normalattack', [12, 13, 14, 15], 18, false);
 	player.animations.add('airattackdown', [16, 17, 18, 19], 18, false);
+	player.animations.add('deadanimation', [0], 1, false);
 	
-	let hpbar = game.add.graphics();
-		hpbar.beginFill(0xFF3300);
-		hpbar.drawRect(-20, -30, 40, 4);
-		hpbar.endFill();
-	player.addChild(hpbar);
-	player.hpbar = hpbar;
+}
+
+let resetplayerpos = (player, wichside) =>{
 	
-	let stambar = game.add.graphics();
-		stambar.beginFill(0x0000FF);
-		stambar.drawRect(-20, -25, 40, 4);
-		stambar.endFill();
-	player.addChild(stambar);
-	player.stambar = stambar;
-	
+	player.x = wichside;
+	player.y = game.world.height/2;
+
 }
 
 let addweaponstats = (weapon) => {
