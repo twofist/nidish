@@ -39,9 +39,16 @@ const	gamewidth = 720,
 //gamestate
 		ingame = 2;
 		inmenu = 1;
+		
+		decide = 0;
+		goright = 1;
+		goleft = 2;
 
 let 	game = new Phaser.Game(gamewidth, gameheight, Phaser.AUTO, '', { preload: preload, create: create, update: update }),
 		gamestate,
+		handlesidepass = goright,
+		canpassright,
+		canpassleft,
 		platforms,
 		swords,
 		shields,
@@ -284,6 +291,7 @@ function update() {
 		
 		//check if player goes outside the camera
 		checkforscene(player1, player2);
+		canpassside();
 	
 		text.setText("FPS: " +game.time.fps);
 	break;
@@ -322,62 +330,78 @@ let playermovement = (player, leftkey, rightkey, upkey, downkey, attackkey, bloc
 	let blockamounttimer;
 	
 	if(throwkey.justPressed() && player.curstate !== normalattack && player.curstate !== airattackdown && player.sword !== 0){
+		
 		throwthesword(player);
+		
 	}else if(downkey.isDown && player.body.touching.down && player.curstate !== normalattack){
+		
  		player.curstate = ducking;
+		
  	}else if(attackkey.justPressed() && player.body.touching.down && player.sword !== 0 && player.curstate !== normalattack){
+		
  			player.curstate = normalattack;
 			swordslash.play();
- 	}else if(player === player1 && leftkey.isDown && player.curstate !== normalattack){
+					
+ 	}else if((leftkey.isDown && player.curstate !== normalattack) && (player.x-(player.width/2) > game.camera.x || handlesidepass === goleft && canpassright === player)){
+		
  		player.body.velocity.x = -walkspeed;
+		
  		if(player.curstate !== airattackdown){
  			player.curstate = walking;
  		}
  			switch(player.scale.x){case -playerscalew: player.scale.x = player.scale.x * -1; break; default: }
- 	}else if(player === player2 && leftkey.isDown && player.x-(player.width/2) > game.camera.x && player.curstate !== normalattack){
- 		player.body.velocity.x = -walkspeed;
- 		if(player.curstate !== airattackdown){
- 			player.curstate = walking;
- 		}
- 			switch(player.scale.x){case -playerscalew: player.scale.x = player.scale.x * -1; break; default: }
- 	}else if(player === player1 && rightkey.isDown && player.x-(player.width/2) < game.camera.x+game.camera.width && player.curstate !== normalattack){
+			
+ 	}else if((rightkey.isDown && player.curstate !== normalattack) && (player.x-(player.width/2) < game.camera.x+game.camera.width || handlesidepass === goright && canpassright === player)){
+		
  		player.body.velocity.x = walkspeed;
+		
  		if(player.curstate !== airattackdown){
+			
  			player.curstate = walking;
+			
  		}
  			switch(player.scale.x){case playerscalew: player.scale.x = player.scale.x * -1; break; default: }
- 	}else if(player === player2 && rightkey.isDown && player.curstate !== normalattack){
- 		player.body.velocity.x = walkspeed;
- 		if(player.curstate !== airattackdown){
- 			player.curstate = walking;
- 		}
- 			switch(player.scale.x){case playerscalew: player.scale.x = player.scale.x * -1; break; default: }
+			
  	}else if(blockkey.isDown && player.body.touching.down && player.shield !== 0 && player.curstate !== normalattack){
+		
  		player.blocking = true;
  		player.curstate = blocking;
 		game.time.events.remove(blockamounttimer);
  	//}else if(player.body.touching.down && player.curstate !== normalattack){
  	//	player.curstate = exhaustedidle;
+	
  	}else if(player.body.touching.down && player.curstate !== normalattack){
+		
  		player.curstate = idle;	
+		
 	}
 	
 	if(attackkey.justPressed() && !player.body.touching.down && player.sword !== 0 && player.curstate !== airattackdown){
+		
 		player.curstate = airattackdown
 		swordslash.play();
+		
 	}else if(player.body.velocity.y > 0 && !player.body.touching.down && player.curstate !== airattackdown){
+		
 		player.curstate = falling;
+		
 	}else if(player.body.velocity.y < 0 && !player.body.touching.down && player.curstate !== airattackdown){
+		
 		player.curstate = jumping;
+		
 	}
 	
 	if(player.shield === 0 || player.curstate !== blocking){
+		
 		player.blocking = false;
 		blockamounttimer = game.time.events.add(500, resetblockamount, this, player);
+		
 	}
 	
 	if(upkey.isDown && player.body.touching.down && player.curstate !== normalattack && player.curstate !== airattackdown){
+		
 		player.body.velocity.y = -jumpvelocity;
+		
 	}	
 	
 }
@@ -1388,6 +1412,23 @@ let checkforscene = (player1, player2) =>{
 		player2.x = leftside;
 		player1.x = rightside;
 		text.x = game.camera.x;
+	}
+	
+}
+
+let canpassside = () => {
+	
+	switch(handlesidepass){
+		case decide: 	canpassright = 0;
+						canpassleft = 0;
+			break;
+		case goright: 	canpassright = player2;
+						canpassleft = 0;
+			break;
+		case goleft: 	canpassright = 0;
+						canpassleft = player1;
+			break;
+		default:
 	}
 	
 }
