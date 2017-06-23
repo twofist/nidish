@@ -46,7 +46,7 @@ const	gamewidth = 720,
 
 let 	game = new Phaser.Game(gamewidth, gameheight, Phaser.AUTO, '', { preload: preload, create: create, update: update }),
 		gamestate,
-		handlesidepass = goright,
+		handlesidepass = decide,
 		canpassright,
 		canpassleft,
 		platforms,
@@ -464,7 +464,15 @@ let playerstates = (player, otherplayer) => {
 let updatebars = (player) => {
 
     if(player.curhp < 0){
+		
 		player.curstate = dead;
+		
+		if(player === player1){
+			handlesidepass = goright;
+		}else if(player === player2){
+			handlesidepass = goleft;
+		}
+		
    	}
 	
 }
