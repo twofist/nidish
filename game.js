@@ -342,7 +342,7 @@ let playermovement = (player, leftkey, rightkey, upkey, downkey, attackkey, bloc
  			player.curstate = normalattack;
 			swordslash.play();
 					
- 	}else if((leftkey.isDown && player.curstate !== normalattack) && (player.x-(player.width/2) > game.camera.x || handlesidepass === goleft && canpassright === player)){
+ 	}else if((leftkey.isDown && player.curstate !== normalattack) && (player.x-(player.width/2) > game.camera.x || handlesidepass === goleft && canpassleft === player)){
 		
  		player.body.velocity.x = -walkspeed;
 		
