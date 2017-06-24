@@ -1,5 +1,5 @@
 //initialize shit
-
+"use strict";
 //camera size (gamesize = *5)
 const	gamewidth = 720,
 		gameheight = 480,
@@ -33,30 +33,40 @@ const	gamewidth = 720,
 		airattackdown = 6,
 		jumping = 7,
 		falling = 8,
-		ducking = 9;
-		dead = 10;
+		ducking = 9,
+		dead = 10,
 		
 //gamestate
-		ingame = 2;
-		inmenu = 1;
+		ingame = 2,
+		inmenu = 1,
 		
-		decide = 0;
-		goright = 1;
+		decide = 0,
+		goright = 1,
 		goleft = 2;
 
 let 	game = new Phaser.Game(gamewidth, gameheight, Phaser.AUTO, '', { preload: preload, create: create, update: update }),
+		player1,
+		player2,
+		cursors,
+		wasd,
 		gamestate,
 		handlesidepass = decide,
+		arrowstuff,
 		canpassright,
 		canpassleft,
 		platforms,
 		swords,
 		shields,
+		sword1,
+		sword2,
+		shield1,
+		shield2,
 		swordslash,
 		swordpickup,
-		swordhitobj;
-
-let 	textanimation,
+		swordhitobj,
+		test,
+		text,
+		textanimation,
 		nidish,
 		playgame,
 		github;
@@ -81,6 +91,7 @@ let loadingstart = () =>{
 	game.load.image("shield", "images/shield2.png");
 	
 	game.load.spritesheet('player', 'images/player.png', spritesizew, spritesizeh);
+	game.load.spritesheet('arrowstuff', 'images/arrow/arrowstuff.png', 32, 32);
 	
 	game.load.audio('slash', 'sounds/swordslash.mp3');
 	game.load.audio('pickup', 'sounds/swordpickup.mp3');
@@ -201,6 +212,9 @@ function startthegame(){
 	
 		addplayerstats(player1);
 		addplayerstats(player2);
+	
+	arrowstuff = game.add.sprite(game.camera.x + (game.camera.width/2), 0, 'arrowstuff');
+	arrowstuff.scale.setTo(3,3);
 	
 	//make weapon group
 	swords = game.add.group();
@@ -1429,12 +1443,18 @@ let canpassside = () => {
 	switch(handlesidepass){
 		case decide: 	canpassright = 0;
 						canpassleft = 0;
+						arrowstuff.frame = 2;
+						arrowstuff.x = game.camera.x + (game.camera.width/2) - (arrowstuff.width/2);
 			break;
 		case goright: 	canpassright = player2;
 						canpassleft = 0;
+						arrowstuff.frame = 0;
+						arrowstuff.x = game.camera.x + game.camera.width - arrowstuff.width;
 			break;
 		case goleft: 	canpassright = 0;
 						canpassleft = player1;
+						arrowstuff.frame = 1;
+						arrowstuff.x = game.camera.x;
 			break;
 		default:
 	}
