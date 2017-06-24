@@ -282,9 +282,9 @@ function update() {
 
 	switch(gamestate){
 	  case ingame:
-		let swordplatform = game.physics.arcade.collide(swords, platforms);
-		let shieldplatform = game.physics.arcade.collide(shields, platforms);
-		let hitPlayer = game.physics.arcade.collide(player1, player2);
+		game.physics.arcade.collide(swords, platforms);
+		game.physics.arcade.collide(shields, platforms);
+		game.physics.arcade.collide(player1, player2);
 		
 		addweapontoplayer(player1, player2);
 		addweapontoplayer(player2, player1);
@@ -328,7 +328,7 @@ let keepplayerupdated = (player, otherplayer) =>{
 
 let movement = (player) => {
 
-	let hitPlatform = game.physics.arcade.collide(player, platforms);
+	game.physics.arcade.collide(player, platforms);
 
 	if(player === player1){
 		playermovement(player, cursors.left, cursors.right, cursors.up, cursors.down, wasd.Okey, wasd.Pkey, wasd.Ikey);
