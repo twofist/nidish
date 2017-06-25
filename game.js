@@ -113,10 +113,22 @@ let loadingcomplete = () =>{
 	
 }
 
-
+let 	bmd,
+		mybmd,
+		sprite,
+		tooltip,
+		player1display,
+		player2display,
+		sword1display,
+		sword2display,
+		shield1display,
+		shield2display,
+		displayarray = [],
+		i = 0,
+		hex;
 
 function create() {
-	
+
 	text.destroy();
 	gamestate = inmenu;
 	
@@ -129,7 +141,97 @@ function create() {
 	
 	textinit();
 	
+	bmd = game.add.bitmapData(150, 100);
+	let grd = bmd.context.createLinearGradient(0, 0, 150, 0);
+	grd.addColorStop(0, "black");
+	grd.addColorStop(0.3,"magenta");
+	grd.addColorStop(0.5,"blue");
+	grd.addColorStop(0.6,"green");
+	grd.addColorStop(0.8,"yellow");
+	grd.addColorStop(1,"red");
+	bmd.context.fillStyle = grd;
+	bmd.context.fillRect(0,0,150,100);
+	bmd.update();
+	mybmd = game.add.sprite(game.camera.x + game.camera.width/2, game.height/3, bmd);
+	
+	tooltip = game.make.bitmapData(32, 32);
+
+	sprite = game.add.sprite(0, 0, tooltip);
+
+	game.input.addMoveCallback(updateTooltip, this);
+	
+	let leftside = game.camera.x + (game.camera.width/4);
+	let rightside = game.camera.x + game.camera.width - (game.camera.width/4);
+	
+	player2display = game.add.sprite(rightside, game.world.height/2, 'player');
+	player1display = game.add.sprite(rightside, game.world.height/2-(player2display.height*4), 'player');
+	
+	player1display.scale.setTo(3, 3);
+	player2display.scale.setTo(3, 3);
+	
+	sword1display = game.add.sprite(rightside + 75, player1display.y, "sword");
+	sword2display = game.add.sprite(rightside + 75, player2display.y, "sword");
+	
+	sword1display.scale.setTo(3, 3);
+	sword2display.scale.setTo(3, 3);
+	
+	shield1display = game.add.sprite(rightside + 74, player1display.y + player1display.height/1.5, "shield");
+	shield2display = game.add.sprite(rightside + 74, player2display.y + player2display.height/1.5, "shield"); 
+	
+	shield1display.scale.setTo(3, 3);
+	shield2display.scale.setTo(3, 3);
+	
+	displayarray.push(player1display, sword1display, shield1display, player2display, sword2display, shield2display);
+	
 }
+
+function updateTooltip (pointer, x, y) {
+
+	if (x >= mybmd.x && x <= mybmd.x + mybmd.width && y >= mybmd.y && y <= mybmd.y + mybmd.height)
+	{
+
+		let cpickerx = pointer.x -(game.camera.x + game.camera.width/2)
+		let cpickery = pointer.y -(game.height/3)
+		let color = bmd.getPixelRGB(cpickerx, cpickery);
+		
+		let rgb = color.rgba.split("(")[1].split(")")[0];
+		rgb = rgb.split(",");
+		rgb.splice(-1,1)
+	
+		let hex = rgb.map(function(x){
+			x = parseInt(x).toString(16);
+			return (x.length==1) ? "0"+x : x;
+		});
+		
+		hex = "0x"+hex.join("");
+
+		tooltip.fill(0, 0, 0, 0);
+		tooltip.rect(0, 0, 32, 32, color.rgba);		
+		sprite.x = x;
+		sprite.y = y;
+		
+		
+		
+		if (pointer.leftButton.justPressed()){
+			
+			displayarray[i].tint = hex;
+			i++
+			if(i > 5){i = 0;}
+			
+		}
+
+	}
+
+}
+
+
+
+
+
+
+
+
+
 
 function textinit(){
 	
@@ -175,6 +277,16 @@ function up(item) {
 
 function startthegame(){
 	
+	bmd.destroy();
+	tooltip.destroy();
+	sprite.destroy();
+	mybmd.destroy();
+	player1display.destroy();
+	player2display.destroy();
+	sword1display.destroy();
+	sword2display.destroy();
+	shield1display.destroy();
+	shield2display.destroy();
 	textanimation.destroy();
 	nidish.destroy();
 	playgame.destroy();
@@ -206,9 +318,12 @@ function startthegame(){
 	let rightside = game.camera.x + game.camera.width - (game.camera.width/4);
 	
 	// The player and its settings
-	player1 = game.add.sprite(rightside, game.world.height/2, 'player');
 	
+	player1 = game.add.sprite(rightside, game.world.height/2, 'player');
+	player1.tint = displayarray[0].tint;
+
 	player2 = game.add.sprite(leftside, game.world.height/2, 'player');
+	player2.tint = displayarray[3].tint;
 	
 		addplayerstats(player1);
 		addplayerstats(player2);
@@ -222,11 +337,17 @@ function startthegame(){
 	
 	//add sword and shields
 	sword1 = swords.create(rightside + 75, game.world.height/2, "sword");
+	sword1.tint = displayarray[1].tint;
+	
 	sword2 = swords.create(leftside + 75, game.world.height/2, "sword");
-	
+	sword2.tint = displayarray[4].tint;
+
 	shield1 = shields.create(rightside + 50, game.world.height/2, "shield");
-	shield2 = shields.create(leftside + 50, game.world.height/2, "shield");
+	shield1.tint = displayarray[3].tint;
 	
+	shield2 = shields.create(leftside + 50, game.world.height/2, "shield");
+	shield2.tint = displayarray[5].tint;
+
 		addweaponstats(shield1);
 		addweaponstats(shield2);
 		addweaponstats(sword1);
@@ -308,6 +429,7 @@ function update() {
 		canpassside();
 	
 		text.setText("FPS: " +game.time.fps);
+		
 	break;
 	default:
 	}
