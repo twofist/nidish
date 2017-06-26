@@ -37,8 +37,10 @@ const	gamewidth = 720,
 		dead = 10,
 		
 //gamestate
-		ingame = 2,
+		
 		inmenu = 1,
+		ingame = 2,
+		win = 3,
 		
 		decide = 0,
 		goright = 1,
@@ -64,7 +66,7 @@ let 	game = new Phaser.Game(gamewidth, gameheight, Phaser.AUTO, '', { preload: p
 		swordslash,
 		swordpickup,
 		swordhitobj,
-		test,
+		whowon,
 		text,
 		textanimation,
 		nidish,
@@ -86,7 +88,6 @@ function preload() {
 let loadingstart = () =>{
 	
 	game.load.image('platform', 'images/platform.png');
-	game.load.image("test", "images/test.png");
 	game.load.image("sword", "images/sword1.png");
 	game.load.image("shield", "images/shield2.png");
 	
@@ -224,18 +225,11 @@ function updateTooltip (pointer, x, y) {
 
 }
 
-
-
-
-
-
-
-
-
-
 function textinit(){
 	
-	nidish = game.add.text(gamewidth/2-160, 0, "Nidish", { font: "80px Courier New", fill: "#c2a83e", align: "center" });
+	if(gamestate === inmenu){
+		
+	nidish = game.add.text(gamewidth/3, 0, "Nidish", { font: "80px Courier New", fill: "#c2a83e", align: "center" });
 	
 	playgame = game.add.text(0, 100, "Play", { font: "65px Courier New", fill: "#c2a83e", align: "center" });
 	
@@ -243,6 +237,21 @@ function textinit(){
 
 	enableinput(playgame);
 	enableinput(github);
+	
+	}
+	
+	if(gamestate === win){
+
+	nidish = game.add.text(gamewidth/10, 0, whowon + " Wins", { font: "80px Courier New", fill: "#c2a83e", align: "center" });
+	
+	playgame = game.add.text(0, 100, "Back to menu", { font: "65px Courier New", fill: "#c2a83e", align: "center" });
+	
+	github = game.add.text(0, 250, "Rematch", { font: "65px Courier New", fill: "#c2a83e", align: "center" });
+
+	enableinput(playgame);
+	enableinput(github);
+	
+	}
 	
 }
 
@@ -265,14 +274,37 @@ function over(item) {
 }
 
 function up(item) {
-
-    if(item === playgame){
-		gamestate = ingame;
-		startthegame();
-	}else if(item === github){
-		location.href = "http://www.github.com/twofist";
+	
+	if (gamestate === inmenu){
+		if(item === playgame){
+			gamestate = ingame;
+			startthegame();
+		}else if(item === github){
+			location.href = "http://www.github.com/twofist";
+		}
 	}
 	
+	if(gamestate === win){
+		
+		if(item === playgame){
+			nidish.destroy();
+			playgame.destroy();
+			github.destroy();
+			textanimation.destroy();
+			displayarray = [];
+			create();
+		}else if(item === github){
+			nidish.destroy();
+			playgame.destroy();
+			github.destroy();
+			textanimation.destroy();
+			displayarray = [];
+			i = 0;
+			create();
+		}
+		
+	}
+
 }
 
 function startthegame(){
@@ -394,9 +426,6 @@ function startthegame(){
 	let style = { font: "24px Arial", fill: "#fff" };
 	text = game.add.text(game.camera.x, 0, "FPS: " +game.time.fps, style);
 	
-	test = game.add.sprite(0, 0, 'test');
-	game.physics.arcade.enable(test); //enable red rectangle to be moved in top left for testing purposes
-	
 }
 
 function update() {
@@ -430,10 +459,48 @@ function update() {
 	
 		text.setText("FPS: " +game.time.fps);
 		
+		checkforwin();
+		
 	break;
 	default:
 	}
 
+}
+
+let checkforwin = ()=>{
+	
+	if(player2.x < game.world.width && player2.x > game.world.width - 50){
+		gamestate = win;
+		whowon = "player2";
+		winscreen();
+	}
+	
+	if(player1.x > 0 && player1.x < 50){
+		gamestate = win;
+		whowon = "player1";
+		winscreen();
+	}
+	
+}
+
+function winscreen(){
+	
+	platforms.destroy();
+	player1.destroy();
+	player2.destroy();
+	swords.destroy();
+	shields.destroy();
+	arrowstuff.destroy();
+	text.destroy();
+	
+	game.world.setBounds(0, 0, gamewidth, gameheight);
+	
+	textanimation = game.add.sprite(0, 160, 'nyan');
+	textanimation.animations.add('shiny', [1,2,3,4,5,6,7,8,9,10,11,12], 20, true);
+	textanimation.visible = false;
+	
+	textinit();
+	
 }
 
 
