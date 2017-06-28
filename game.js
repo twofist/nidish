@@ -136,7 +136,12 @@ function create() {
 	
 	game.world.setBounds(0, 0, gamewidth, gameheight);
 	game.stage.backgroundColor = "#243e36";
-	game.scale.fullScreenScaleMode = Phaser.ScaleManager.USER_SCALE;
+	
+	//game.scale.fullScreenScaleMode = Phaser.ScaleManager.USER_SCALE;
+	game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+	//game.scale.fullScreenScaleMode = Phaser.ScaleManager.RESIZE;
+	//game.scale.fullScreenScaleMode = Phaser.ScaleManager.NO_SCALE;
+	//game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
 	
 	textanimation = game.add.sprite(0, 160, 'nyan');
 	textanimation.animations.add('shiny', [1,2,3,4,5,6,7,8,9,10,11,12], 20, true);
@@ -197,7 +202,7 @@ function gofull() {
     }
     else{
 		
-		game.scale.setUserScale(1, 1);
+		//game.scale.setUserScale(1, 1);
         game.scale.startFullScreen(true);
 		
     }
@@ -321,6 +326,7 @@ function up(item) {
 			nidish.destroy();
 			playgame.destroy();
 			github.destroy();
+			fullscreen.destroy();
 			
 			
 			gamestate = ingame;
@@ -340,8 +346,10 @@ function up(item) {
 			nidish.destroy();
 			playgame.destroy();
 			github.destroy();
+			fullscreen.destroy();
 			textanimation.destroy();
 			displayarray = [];
+			i = 0;
 			create();
 			
 		}else if(item === github){
@@ -349,6 +357,7 @@ function up(item) {
 			nidish.destroy();
 			playgame.destroy();
 			github.destroy();
+			fullscreen.destroy();
 			textanimation.destroy();
 			//displayarray = [];
 			//i = 0;
