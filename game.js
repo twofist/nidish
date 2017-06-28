@@ -52,7 +52,7 @@ let 	game = new Phaser.Game(gamewidth, gameheight, Phaser.AUTO, '', { preload: p
 		cursors,
 		wasd,
 		gamestate,
-		handlesidepass = decide,
+		handlesidepass,
 		arrowstuff,
 		canpassright,
 		canpassleft,
@@ -71,6 +71,7 @@ let 	game = new Phaser.Game(gamewidth, gameheight, Phaser.AUTO, '', { preload: p
 		textanimation,
 		nidish,
 		playgame,
+		fullscreen,
 		github;
 		
 function preload() {
@@ -135,6 +136,7 @@ function create() {
 	
 	game.world.setBounds(0, 0, gamewidth, gameheight);
 	game.stage.backgroundColor = "#243e36";
+	game.scale.fullScreenScaleMode = Phaser.ScaleManager.USER_SCALE;
 	
 	textanimation = game.add.sprite(0, 160, 'nyan');
 	textanimation.animations.add('shiny', [1,2,3,4,5,6,7,8,9,10,11,12], 20, true);
@@ -186,6 +188,22 @@ function create() {
 	
 }
 
+function gofull() {
+
+    if (game.scale.isFullScreen){
+		
+        game.scale.stopFullScreen();
+		
+    }
+    else{
+		
+		game.scale.setUserScale(1, 1);
+        game.scale.startFullScreen(true);
+		
+    }
+
+}
+
 function updateTooltip (pointer, x, y) {
 
 	if (x >= mybmd.x && x <= mybmd.x + mybmd.width && y >= mybmd.y && y <= mybmd.y + mybmd.height)
@@ -234,9 +252,12 @@ function textinit(){
 	playgame = game.add.text(0, 100, "Play", { font: "65px Courier New", fill: "#c2a83e", align: "center" });
 	
 	github = game.add.text(0, 250, "Github", { font: "65px Courier New", fill: "#c2a83e", align: "center" });
+	
+	fullscreen = game.add.text(0, 400, "Fullscreen", { font: "65px Courier New", fill: "#c2a83e", align: "center" });
 
 	enableinput(playgame);
 	enableinput(github);
+	enableinput(fullscreen);
 	
 	}
 	
@@ -247,9 +268,12 @@ function textinit(){
 	playgame = game.add.text(0, 100, "Back to menu", { font: "65px Courier New", fill: "#c2a83e", align: "center" });
 	
 	github = game.add.text(0, 250, "Rematch", { font: "65px Courier New", fill: "#c2a83e", align: "center" });
+	
+	fullscreen = game.add.text(0, 400, "Fullscreen", { font: "65px Courier New", fill: "#c2a83e", align: "center" });
 
 	enableinput(playgame);
 	enableinput(github);
+	enableinput(fullscreen);
 	
 	}
 	
@@ -275,32 +299,61 @@ function over(item) {
 
 function up(item) {
 	
+	if(item === fullscreen){
+		gofull();
+	}
+	
 	if (gamestate === inmenu){
+		
 		if(item === playgame){
+			
+			bmd.destroy();
+			tooltip.destroy();
+			sprite.destroy();
+			mybmd.destroy();
+			player1display.destroy();
+			player2display.destroy();
+			sword1display.destroy();
+			sword2display.destroy();
+			shield1display.destroy();
+			shield2display.destroy();
+			textanimation.destroy();
+			nidish.destroy();
+			playgame.destroy();
+			github.destroy();
+			
+			
 			gamestate = ingame;
 			startthegame();
+			
 		}else if(item === github){
+			
 			location.href = "http://www.github.com/twofist";
+			
 		}
 	}
 	
 	if(gamestate === win){
 		
 		if(item === playgame){
+			
 			nidish.destroy();
 			playgame.destroy();
 			github.destroy();
 			textanimation.destroy();
 			displayarray = [];
 			create();
+			
 		}else if(item === github){
+			
 			nidish.destroy();
 			playgame.destroy();
 			github.destroy();
 			textanimation.destroy();
-			displayarray = [];
-			i = 0;
-			create();
+			//displayarray = [];
+			//i = 0;
+			startthegame();
+			
 		}
 		
 	}
@@ -308,21 +361,6 @@ function up(item) {
 }
 
 function startthegame(){
-	
-	bmd.destroy();
-	tooltip.destroy();
-	sprite.destroy();
-	mybmd.destroy();
-	player1display.destroy();
-	player2display.destroy();
-	sword1display.destroy();
-	sword2display.destroy();
-	shield1display.destroy();
-	shield2display.destroy();
-	textanimation.destroy();
-	nidish.destroy();
-	playgame.destroy();
-	github.destroy();
 
 	game.world.setBounds(0, 0, gamewidth*5, gameheight);
 
@@ -425,6 +463,8 @@ function startthegame(){
 	game.time.advancedTiming = true;
 	let style = { font: "24px Arial", fill: "#fff" };
 	text = game.add.text(game.camera.x, 0, "FPS: " +game.time.fps, style);
+	
+	handlesidepass = decide;
 	
 }
 
@@ -666,7 +706,7 @@ let playerstates = (player, otherplayer) => {
 
 let updatebars = (player) => {
 
-    if(player.curhp < 0){
+    if(player.curhp <= 0){
 		
 		player.curstate = dead;
 		
