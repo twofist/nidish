@@ -140,10 +140,10 @@ function create() {
 	game.stage.backgroundColor = "#243e36";
 	
 	//game.scale.fullScreenScaleMode = Phaser.ScaleManager.USER_SCALE;
-	game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+	//game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
 	//game.scale.fullScreenScaleMode = Phaser.ScaleManager.RESIZE;
 	//game.scale.fullScreenScaleMode = Phaser.ScaleManager.NO_SCALE;
-	//game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
+	game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
 	
 	textanimation = game.add.sprite(0, 160, 'nyan');
 	textanimation.animations.add('shiny', [1,2,3,4,5,6,7,8,9,10,11,12], 20, true);
@@ -196,7 +196,7 @@ function addcolorpicker(){
 	tooltip = game.make.bitmapData(32, 32);
 
 	sprite = game.add.sprite(0, 0, tooltip);
-
+	
 	game.input.addMoveCallback(updateTooltip, this);
 	
 }
@@ -204,32 +204,29 @@ function addcolorpicker(){
 function deletecolorpicker(){
 	bmd.destroy();
 	mybmd.destroy();
-        tooltip.destroy();
+    tooltip.destroy();
 	sprite.destroy();
+	
 }
 
 function gofull() {
-
+	
     if (game.scale.isFullScreen){
 	
-        game.scale.stopFullScreen();
-	deletecolorpicker();
-	addcolorpicker();
+    game.scale.stopFullScreen();
 		
     }
     else{
 		
-		//game.scale.setUserScale(1, 1);
-        game.scale.startFullScreen(true);
-	deletecolorpicker();
-	addcolorpicker();
+	//game.scale.setUserScale(1, 1);
+    game.scale.startFullScreen(true);
 		
     }
 
 }
 
 function updateTooltip (pointer, x, y) {
-
+	
 	if (x >= mybmd.x && x <= mybmd.x + mybmd.width && y >= mybmd.y && y <= mybmd.y + mybmd.height)
 	{
 
@@ -252,8 +249,6 @@ function updateTooltip (pointer, x, y) {
 		tooltip.rect(0, 0, 32, 32, color.rgba);		
 		sprite.x = x;
 		sprite.y = y;
-		
-		
 		
 		if (pointer.leftButton.justPressed()){
 			
@@ -331,10 +326,6 @@ function up(item) {
 		
 		if(item === playgame){
 			
-			bmd.destroy();
-			tooltip.destroy();
-			sprite.destroy();
-			mybmd.destroy();
 			player1display.destroy();
 			player2display.destroy();
 			sword1display.destroy();
@@ -346,7 +337,7 @@ function up(item) {
 			playgame.destroy();
 			github.destroy();
 			fullscreen.destroy();
-			
+			deletecolorpicker();
 			
 			gamestate = ingame;
 			startthegame();
