@@ -151,24 +151,7 @@ function create() {
 	
 	textinit();
 	
-	bmd = game.add.bitmapData(150, 100);
-	let grd = bmd.context.createLinearGradient(0, 0, 150, 0);
-	grd.addColorStop(0, "black");
-	grd.addColorStop(0.3,"magenta");
-	grd.addColorStop(0.5,"blue");
-	grd.addColorStop(0.6,"green");
-	grd.addColorStop(0.8,"yellow");
-	grd.addColorStop(1,"red");
-	bmd.context.fillStyle = grd;
-	bmd.context.fillRect(0,0,150,100);
-	bmd.update();
-	mybmd = game.add.sprite(game.camera.x + game.camera.width/2, game.height/3, bmd);
-	
-	tooltip = game.make.bitmapData(32, 32);
-
-	sprite = game.add.sprite(0, 0, tooltip);
-
-	game.input.addMoveCallback(updateTooltip, this);
+	addcolorpicker();
 	
 	let leftside = game.camera.x + (game.camera.width/4);
 	let rightside = game.camera.x + game.camera.width - (game.camera.width/4);
@@ -195,17 +178,51 @@ function create() {
 	
 }
 
+function addcolorpicker(){
+
+	bmd = game.add.bitmapData(150, 100);
+	let grd = bmd.context.createLinearGradient(0, 0, 150, 0);
+	grd.addColorStop(0, "black");
+	grd.addColorStop(0.3,"magenta");
+	grd.addColorStop(0.5,"blue");
+	grd.addColorStop(0.6,"green");
+	grd.addColorStop(0.8,"yellow");
+	grd.addColorStop(1,"red");
+	bmd.context.fillStyle = grd;
+	bmd.context.fillRect(0,0,150,100);
+	bmd.update();
+	mybmd = game.add.sprite(game.camera.x + game.camera.width/2, game.height/3, bmd);
+	
+	tooltip = game.make.bitmapData(32, 32);
+
+	sprite = game.add.sprite(0, 0, tooltip);
+
+	game.input.addMoveCallback(updateTooltip, this);
+	
+}
+
+function deletecolorpicker(){
+	bmd.destroy();
+	mybmd.destroy();
+        tooltip.destroy();
+	sprite.destroy();
+}
+
 function gofull() {
 
     if (game.scale.isFullScreen){
-		
+	
         game.scale.stopFullScreen();
+	deletecolorpicker();
+	addcolorpicker();
 		
     }
     else{
 		
 		//game.scale.setUserScale(1, 1);
         game.scale.startFullScreen(true);
+	deletecolorpicker();
+	addcolorpicker();
 		
     }
 
