@@ -202,6 +202,7 @@ function addcolorpicker(){
 }
 
 function deletecolorpicker(){
+	
 	bmd.destroy();
 	mybmd.destroy();
     tooltip.destroy();
@@ -209,17 +210,38 @@ function deletecolorpicker(){
 	
 }
 
+function deletedisplay(){
+	
+	player1display.destroy();
+	player2display.destroy();
+	sword1display.destroy();
+	sword2display.destroy();
+	shield1display.destroy();
+	shield2display.destroy();
+	
+}
+
+function deletemenu(){
+	
+	textanimation.destroy();
+	nidish.destroy();
+	playgame.destroy();
+	github.destroy();
+	fullscreen.destroy();
+
+}
+
 function gofull() {
 	
     if (game.scale.isFullScreen){
 	
-    game.scale.stopFullScreen();
+		game.scale.stopFullScreen();
 		
     }
     else{
 		
-	//game.scale.setUserScale(1, 1);
-    game.scale.startFullScreen(true);
+		//game.scale.setUserScale(1, 1);
+		game.scale.startFullScreen(true);
 		
     }
 
@@ -266,33 +288,33 @@ function textinit(){
 	
 	if(gamestate === inmenu){
 		
-	nidish = game.add.text(gamewidth/3, 0, "Nidish", { font: "80px Courier New", fill: "#c2a83e", align: "center" });
+		nidish = game.add.text(gamewidth/3, 0, "Nidish", { font: "80px Courier New", fill: "#c2a83e", align: "center" });
 	
-	playgame = game.add.text(0, 100, "Play", { font: "65px Courier New", fill: "#c2a83e", align: "center" });
+		playgame = game.add.text(0, 100, "Play", { font: "65px Courier New", fill: "#c2a83e", align: "center" });
 	
-	github = game.add.text(0, 250, "Github", { font: "65px Courier New", fill: "#c2a83e", align: "center" });
+		github = game.add.text(0, 250, "Github", { font: "65px Courier New", fill: "#c2a83e", align: "center" });
 	
-	fullscreen = game.add.text(0, 400, "Fullscreen", { font: "65px Courier New", fill: "#c2a83e", align: "center" });
+		fullscreen = game.add.text(0, 400, "Fullscreen", { font: "65px Courier New", fill: "#c2a83e", align: "center" });
 
-	enableinput(playgame);
-	enableinput(github);
-	enableinput(fullscreen);
+		enableinput(playgame);
+		enableinput(github);
+		enableinput(fullscreen);
 	
 	}
 	
 	if(gamestate === win){
 
-	nidish = game.add.text(gamewidth/10, 0, whowon + " Wins", { font: "80px Courier New", fill: "#c2a83e", align: "center" });
+		nidish = game.add.text(gamewidth/10, 0, whowon + " Wins", { font: "80px Courier New", fill: "#c2a83e", align: "center" });
 	
-	playgame = game.add.text(0, 100, "Back to menu", { font: "65px Courier New", fill: "#c2a83e", align: "center" });
+		playgame = game.add.text(0, 100, "Back to menu", { font: "65px Courier New", fill: "#c2a83e", align: "center" });
 	
-	github = game.add.text(0, 250, "Rematch", { font: "65px Courier New", fill: "#c2a83e", align: "center" });
+		github = game.add.text(0, 250, "Rematch", { font: "65px Courier New", fill: "#c2a83e", align: "center" });
 	
-	fullscreen = game.add.text(0, 400, "Fullscreen", { font: "65px Courier New", fill: "#c2a83e", align: "center" });
+		fullscreen = game.add.text(0, 400, "Fullscreen", { font: "65px Courier New", fill: "#c2a83e", align: "center" });
 
-	enableinput(playgame);
-	enableinput(github);
-	enableinput(fullscreen);
+		enableinput(playgame);
+		enableinput(github);
+		enableinput(fullscreen);
 	
 	}
 	
@@ -326,17 +348,8 @@ function up(item) {
 		
 		if(item === playgame){
 			
-			player1display.destroy();
-			player2display.destroy();
-			sword1display.destroy();
-			sword2display.destroy();
-			shield1display.destroy();
-			shield2display.destroy();
-			textanimation.destroy();
-			nidish.destroy();
-			playgame.destroy();
-			github.destroy();
-			fullscreen.destroy();
+			deletemenu();
+			deletedisplay();
 			deletecolorpicker();
 			
 			gamestate = ingame;
@@ -353,24 +366,14 @@ function up(item) {
 		
 		if(item === playgame){
 			
-			nidish.destroy();
-			playgame.destroy();
-			github.destroy();
-			fullscreen.destroy();
-			textanimation.destroy();
+			deletemenu();
 			displayarray = [];
 			i = 0;
 			create();
 			
 		}else if(item === github){
 			
-			nidish.destroy();
-			playgame.destroy();
-			github.destroy();
-			fullscreen.destroy();
-			textanimation.destroy();
-			//displayarray = [];
-			//i = 0;
+			deletemenu();
 			startthegame();
 			
 		}
