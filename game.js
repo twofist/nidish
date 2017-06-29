@@ -44,11 +44,13 @@ const	gamewidth = 720,
 		
 		decide = 0,
 		goright = 1,
-		goleft = 2;
+		goleft = 2,
+		godown = 3;
 
 let 	game = new Phaser.Game(gamewidth, gameheight, Phaser.AUTO, '', { preload: preload, create: create, update: update }),
 		player1,
 		player2,
+		gamescene,
 		cursors,
 		wasd,
 		gamestate,
@@ -474,6 +476,7 @@ function startthegame(){
 	text = game.add.text(game.camera.x, 0, "FPS: " +game.time.fps, style);
 	
 	handlesidepass = decide;
+	gamescene = 0;
 	
 }
 
@@ -715,13 +718,17 @@ let playerstates = (player, otherplayer) => {
 
 let updatebars = (player) => {
 
+	if(gamescene === 2 || gamescene === -2){
+		handlesidepass = godown;
+	}
+	
     if(player.curhp <= 0){
 		
 		player.curstate = dead;
 		
-		if(player === player1){
+		if(player === player1 && gamescene !== 2){
 			handlesidepass = goright;
-		}else if(player === player2){
+		}else if(player === player2 && gamescene !== -2){
 			handlesidepass = goleft;
 		}
 		
@@ -1674,6 +1681,21 @@ let checkforscene = (player1, player2) =>{
 		text.x = game.camera.x;
 	}
 	
+	switch(game.camera.x){
+		case 0: 			gamescene = -2;
+			break;
+		case gamewidth: 	gamescene = -1;
+			break;
+		case gamewidth*2: 	gamescene = 0;
+			break;
+		case gamewidth*3: 	gamescene = 1;
+			break;
+		case gamewidth*4: 	gamescene = 2;
+			break;
+		default:
+	}
+	
+	
 }
 
 let canpassside = () => {
@@ -1693,6 +1715,8 @@ let canpassside = () => {
 						canpassleft = player1;
 						arrowstuff.frame = 1;
 						arrowstuff.x = game.camera.x;
+			break;
+		case godown:	arrowstuff.frame = 3
 			break;
 		default:
 	}
