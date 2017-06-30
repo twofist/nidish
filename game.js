@@ -985,6 +985,8 @@ let setswordposition = (player, sword) =>{
 			break;
 		case ducking:			setswordducking(player, sword);
 			break;
+		case dead:				setsworddying(player, sword);
+			break;
 		default: 				sword.x = player.x - player.width/4;
 								sword.y = player.y;
 								sword.angle = 0;
@@ -1013,6 +1015,8 @@ let setshieldposition = (player, shield) =>{
 			break;
 		case ducking:			setshieldducking(player, shield);
 			break;
+		case dead:				setshielddying(player, shield);
+			break;
 		default: 				shield.x = player.x - player.width/4;
 								shield.y = player.y;
 								shield.angle = 0;
@@ -1020,6 +1024,79 @@ let setshieldposition = (player, shield) =>{
 	
 }
 
+
+let setsworddying = (player, sword) =>{
+	
+	let swordinhandy; 
+	let swordinhandx = player.x - player.width/4;
+	let perf;
+	
+	switch(player.frame){
+		
+	case 21:	perf = 3;
+				swordinhandy = player.y - 2;
+			switch(player.scale.x){
+			case -playerscalew:
+						sword.angle = 30;
+						sword.x = swordinhandx + perf;
+						sword.y = swordinhandy;
+				break;
+			default: 
+						sword.angle = -30;
+						sword.x = swordinhandx - perf;
+						sword.y = swordinhandy;
+			}
+		break;
+		
+	case 22: 	perf = 6;
+				swordinhandy = player.y - 3;
+			switch(player.scale.x){
+			case -playerscalew:
+						sword.angle = 40;
+						sword.x = swordinhandx + perf;
+						sword.y = swordinhandy;
+				break;
+			default: 
+						sword.angle = -40;
+						sword.x = swordinhandx - perf;
+						sword.y = swordinhandy;
+			}
+		break;
+		
+	case 23: 	perf = 9;
+				swordinhandy = player.y - -12;
+			switch(player.scale.x){
+			case -playerscalew:
+						sword.angle = 100;
+						sword.x = swordinhandx + perf;
+						sword.y = swordinhandy;
+				break;
+			default: 
+						sword.angle = -100;
+						sword.x = swordinhandx - perf;
+						sword.y = swordinhandy;
+			}
+		break;
+		
+	case 24: 	perf = 12;
+				swordinhandy = player.y - -15;
+			switch(player.scale.x){
+			case -playerscalew:
+						sword.angle = 90;
+						sword.x = swordinhandx + perf;
+						sword.y = swordinhandy;
+				break;
+			default: 
+						sword.angle = -90;
+						sword.x = swordinhandx - perf;
+						sword.y = swordinhandy;
+			}
+		break;
+		
+	default:
+	}
+	
+}
 
 let setswordwalk = (player, sword) =>{
 	
@@ -1368,6 +1445,82 @@ let setswordducking = (player, sword) =>{
 	
 }
 
+
+let setshielddying = (player, shield) =>{
+	
+	let shieldinhandy; 
+	let shieldinhandx = player.x - player.width/4;
+	let perf;
+	
+	switch(player.frame){
+		
+	case 21:	perf = -15;
+				shieldinhandy = player.y - -2;
+			switch(player.scale.x){
+			case -playerscalew:
+						shield.angle = 30;
+						shield.x = shieldinhandx + perf;
+						shield.y = shieldinhandy;
+				break;
+			default: 
+						shield.angle = -30;
+						shield.x = shieldinhandx - perf;
+						shield.y = shieldinhandy;
+			}
+		break;
+		
+	case 22: 	perf = 0;
+				shieldinhandy = player.y - -4;
+			switch(player.scale.x){
+			case -playerscalew:
+						shield.scale.x = -playerscalew;
+						shield.angle = 40;
+						shield.x = shieldinhandx + perf;
+						shield.y = shieldinhandy;
+				break;
+			default: 	shield.scale.x = playerscalew;
+						shield.angle = -40;
+						shield.x = shieldinhandx - perf;
+						shield.y = shieldinhandy;
+			}
+		break;
+		
+	case 23: 	perf = -2;
+				shieldinhandy = player.y - -12;
+			switch(player.scale.x){
+			case -playerscalew:
+						shield.scale.x = -playerscalew;
+						shield.angle = 100;
+						shield.x = shieldinhandx + perf;
+						shield.y = shieldinhandy;
+				break;
+			default: 	shield.scale.x = playerscalew;
+						shield.angle = -100;
+						shield.x = shieldinhandx - perf;
+						shield.y = shieldinhandy;
+			}
+		break;
+		
+	case 24: 	perf = 0;
+				shieldinhandy = player.y - -16;
+			switch(player.scale.x){
+			case -playerscalew:
+						shield.scale.x = -playerscalew;
+						shield.angle = 90;
+						shield.x = shieldinhandx + perf;
+						shield.y = shieldinhandy;
+				break;
+			default: 	shield.scale.x = playerscalew;
+						shield.angle = -90;
+						shield.x = shieldinhandx - perf;
+						shield.y = shieldinhandy;
+			}
+		break;
+		
+	default:
+	}
+	
+}
 
 let setshieldwalk = (player, shield) =>{
 	
@@ -1781,7 +1934,7 @@ let addplayerstats = (player) =>{
 	player.animations.add('exhaustedidle', [3, 4], 1, true);
 	player.animations.add('normalattack', [12, 13, 14, 15], 18, false);
 	player.animations.add('airattackdown', [16, 17, 18, 19], 18, false);
-	player.animations.add('deadanimation', [0], 1, false);
+	player.animations.add('deadanimation', [21, 22, 23, 24], 6, false);
 	
 }
 
