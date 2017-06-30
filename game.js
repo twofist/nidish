@@ -59,6 +59,7 @@ let 	game = new Phaser.Game(gamewidth, gameheight, Phaser.AUTO, '', { preload: p
 		canpassright,
 		canpassleft,
 		platforms,
+		backgrounds,
 		swords,
 		shields,
 		sword1,
@@ -81,7 +82,7 @@ function preload() {
 	text = game.add.text(game.camera.x, game.camera.height/2, 'loading...', { fill: '#ffffff' });
 	game.load.onLoadStart.add(loadingstart, this);
 	
-	game.load.image('platform', 'images/platform.png');
+	game.load.image('platform', 'images/background/middleplatform.png');
 
 	game.load.onFileComplete.add(filecomplete, this);
 	game.load.onLoadComplete.add(loadingcomplete, this);
@@ -96,6 +97,7 @@ let loadingstart = () =>{
 	
 	game.load.spritesheet('player', 'images/player.png', spritesizew, spritesizeh);
 	game.load.spritesheet('arrowstuff', 'images/arrow/arrowstuff.png', 32, 32);
+	game.load.spritesheet('middlebackground', 'images/background/middlebackground.png', 720, 480);
 	
 	game.load.audio('slash', 'sounds/swordslash.mp3');
 	game.load.audio('pickup', 'sounds/swordpickup.mp3');
@@ -382,6 +384,8 @@ function up(item) {
 
 }
 
+let background;
+
 function startthegame(){
 
 	game.world.setBounds(0, 0, gamewidth*5, gameheight);
@@ -389,16 +393,21 @@ function startthegame(){
 	//enable physics system
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 
+	backgrounds = game.add.group();
+	
+	background = backgrounds.create(gamewidth*2, 0, 'middlebackground');
+	background.animations.add('middlebackground', [0, 1, 2, 3, 4, 5, 6, 7, 8], 8, true);
+	
 	//make platforms a group
 	platforms = game.add.group();
 	//enable physics for every object in the group
 	platforms.enableBody = true;
 
 	//create ground
-	let ground = platforms.create(0, game.world.height - 64, 'platform');
+	let ground = platforms.create(gamewidth*2, game.height-40, 'platform');
 
 	//scale it to fit the game size
-	ground.scale.setTo(9, 1);
+	ground.scale.setTo(1, 1);
 
 	//make it not fall when you jump on it
 	ground.body.immovable = true;
@@ -1865,7 +1874,8 @@ let checkforscene = (player1, player2) =>{
 let canpassside = () => {
 	
 	switch(handlesidepass){
-		case decide: 	canpassright = 0;
+		case decide: 	background.animations.play('middlebackground');
+						canpassright = 0;
 						canpassleft = 0;
 						arrowstuff.frame = 2;
 						arrowstuff.x = game.camera.x + (game.camera.width/2) - (arrowstuff.width/2);
