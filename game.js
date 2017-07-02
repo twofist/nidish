@@ -82,7 +82,7 @@ function preload() {
 	text = game.add.text(game.camera.x, game.camera.height/2, 'loading...', { fill: '#ffffff' });
 	game.load.onLoadStart.add(loadingstart, this);
 	
-	game.load.image('platform', 'images/background/middleplatform.png');
+	game.load.image('platform', 'images/background/middle/middleplatform.png');
 
 	game.load.onFileComplete.add(filecomplete, this);
 	game.load.onLoadComplete.add(loadingcomplete, this);
@@ -91,19 +91,19 @@ function preload() {
 
 let loadingstart = () =>{
 	
-	game.load.image('platform', 'images/platform.png');
+	game.load.image('sideplatform', 'images/background/side/sideplatform.png');
 	game.load.image("sword", "images/sword1.png");
 	game.load.image("shield", "images/shield2.png");
 	
+	game.load.spritesheet("nyan", "images/menuanimation/nyan.png", 100, 30);
 	game.load.spritesheet('player', 'images/player.png', spritesizew, spritesizeh);
 	game.load.spritesheet('arrowstuff', 'images/arrow/arrowstuff.png', 32, 32);
-	game.load.spritesheet('middlebackground', 'images/background/middlebackground.png', 720, 480);
+	game.load.spritesheet('middlebackground', 'images/background/middle/middlebackground.png', 720, 480);
+	game.load.spritesheet('sidebackground', 'images/background/side/sidebackground.png', 720, 480);
 	
 	game.load.audio('slash', 'sounds/swordslash.mp3');
 	game.load.audio('pickup', 'sounds/swordpickup.mp3');
 	game.load.audio('hitobj', 'sounds/swordhitobj.mp3');
-	
-	game.load.spritesheet("nyan", "images/menuanimation/nyan.png", 100, 30);
 	
 }
 
@@ -384,7 +384,7 @@ function up(item) {
 
 }
 
-let background;
+let background, sidebackground;
 
 function startthegame(){
 
@@ -398,6 +398,9 @@ function startthegame(){
 	background = backgrounds.create(gamewidth*2, 0, 'middlebackground');
 	background.animations.add('middlebackground', [0, 1, 2, 3, 4, 5, 6, 7, 8], 8, true);
 	
+	sidebackground = backgrounds.create(gamewidth, 0, 'sidebackground');
+	sidebackground.animations.add('sidebackground', [0, 1, 2, 3, 4, 5, 6, 7, 8], 8, true);
+	
 	//make platforms a group
 	platforms = game.add.group();
 	//enable physics for every object in the group
@@ -405,12 +408,20 @@ function startthegame(){
 
 	//create ground
 	let ground = platforms.create(gamewidth*2, game.height-40, 'platform');
+	let ground2 = platforms.create(gamewidth, gameheight-40, 'sideplatform');
+	let ground3 = platforms.create(gamewidth*4, gameheight-40, 'sideplatform');
 
 	//scale it to fit the game size
 	ground.scale.setTo(1, 1);
+	ground2.scale.setTo(1, 1);
+	ground3.scale.setTo(1, 1);
 
 	//make it not fall when you jump on it
 	ground.body.immovable = true;
+	ground2.body.immovable = true;
+	ground3.body.immovable = true;
+	
+	ground3.scale.x = -1;
 	
 	//set camera
 	game.camera.x = (game.world.width/2) - (game.width/2);
@@ -1858,10 +1869,17 @@ let checkforscene = (player1, player2) =>{
 		case 0: 			gamescene = -2;
 			break;
 		case gamewidth: 	gamescene = -1;
+							sidebackground.x = gamewidth;
+							sidebackground.scale.x = 1;
+							sidebackground.animations.play('sidebackground');
 			break;
 		case gamewidth*2: 	gamescene = 0;
+							background.animations.play('middlebackground');
 			break;
 		case gamewidth*3: 	gamescene = 1;
+							sidebackground.x = gamewidth*4;
+							sidebackground.scale.x = -1;
+							sidebackground.animations.play('sidebackground');
 			break;
 		case gamewidth*4: 	gamescene = 2;
 			break;
@@ -1874,8 +1892,7 @@ let checkforscene = (player1, player2) =>{
 let canpassside = () => {
 	
 	switch(handlesidepass){
-		case decide: 	background.animations.play('middlebackground');
-						canpassright = 0;
+		case decide: 	canpassright = 0;
 						canpassleft = 0;
 						arrowstuff.frame = 2;
 						arrowstuff.x = game.camera.x + (game.camera.width/2) - (arrowstuff.width/2);
