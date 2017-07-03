@@ -426,15 +426,15 @@ function startthegame(){
 	//set camera
 	game.camera.x = (game.world.width/2) - (game.width/2);
 	
-	let leftside = game.camera.x + (game.camera.width/4);
-	let rightside = game.camera.x + game.camera.width - (game.camera.width/4);
+	let leftside = game.camera.x + (game.camera.width/5);
+	let rightside = game.camera.x + game.camera.width - (game.camera.width/5);
 	
 	// The player and its settings
 	
-	player1 = game.add.sprite(rightside, game.world.height/2, 'player');
+	player1 = game.add.sprite(rightside, 0, 'player');
 	player1.tint = displayarray[0].tint;
 
-	player2 = game.add.sprite(leftside, game.world.height/2, 'player');
+	player2 = game.add.sprite(leftside, 0, 'player');
 	player2.tint = displayarray[3].tint;
 	
 		addplayerstats(player1);
@@ -448,16 +448,16 @@ function startthegame(){
 	shields = game.add.group();
 	
 	//add sword and shields
-	sword1 = swords.create(rightside + 75, game.world.height/2, "sword");
+	sword1 = swords.create(rightside - 25, 0, "sword");
 	sword1.tint = displayarray[1].tint;
 	
-	sword2 = swords.create(leftside + 75, game.world.height/2, "sword");
+	sword2 = swords.create(leftside + 25, 0, "sword");
 	sword2.tint = displayarray[4].tint;
 
-	shield1 = shields.create(rightside + 50, game.world.height/2, "shield");
+	shield1 = shields.create(rightside + 25, 0, "shield");
 	shield1.tint = displayarray[3].tint;
 	
-	shield2 = shields.create(leftside + 50, game.world.height/2, "shield");
+	shield2 = shields.create(leftside - 25, 0, "shield");
 	shield2.tint = displayarray[5].tint;
 
 		addweaponstats(shield1);
@@ -1849,8 +1849,8 @@ let checkforscene = (player1, player2) =>{
 	if(player1.x <= game.camera.x){
 		
 		game.camera.x = game.camera.x - game.camera.width; //move camera left
-			leftside = game.camera.x + (game.camera.width/4);
-			rightside = game.camera.x + game.camera.width - (game.camera.width/4);
+			leftside = game.camera.x + (game.camera.width/20);
+			rightside = game.camera.x + game.camera.width - (game.camera.width/20);
 		player1.x = rightside;
 		player2.x = leftside;
 		text.x = game.camera.x;
@@ -1858,8 +1858,8 @@ let checkforscene = (player1, player2) =>{
 	}else if(player2.x >= game.camera.x+game.camera.width){
 		
 		game.camera.x = game.camera.x + game.camera.width; //move camera right
-			leftside = game.camera.x + (game.camera.width/4);
-			rightside = game.camera.x + game.camera.width - (game.camera.width/4);
+			leftside = game.camera.x + (game.camera.width/20);
+			rightside = game.camera.x + game.camera.width - (game.camera.width/20);
 		player2.x = leftside;
 		player1.x = rightside;
 		text.x = game.camera.x;
@@ -1940,10 +1940,10 @@ let addplayerstats = (player) =>{
 	player.respawn = function(){
 		
 		if(player === player1){
-			let rightside = game.camera.x + game.camera.width - (game.camera.width/4);
+			let rightside = game.camera.x + game.camera.width - (game.camera.width/20);
 			resetplayerpos(player, rightside);
 		}else if(player === player2){
-			let leftside = game.camera.x + (game.camera.width/4);
+			let leftside = game.camera.x + (game.camera.width/20);
 			resetplayerpos(player, leftside);			
 		}
 		
