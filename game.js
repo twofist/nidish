@@ -161,22 +161,27 @@ function create() {
 	player2display = game.add.sprite(rightside, game.world.height/2, 'player');
 	player1display = game.add.sprite(rightside, game.world.height/2-(player2display.height*4), 'player');
 	
-	player1display.scale.setTo(3, 3);
-	player2display.scale.setTo(3, 3);
+	initdisplay(player2display);
+	initdisplay(player1display);
 	
 	sword1display = game.add.sprite(rightside + 75, player1display.y, "sword");
 	sword2display = game.add.sprite(rightside + 75, player2display.y, "sword");
 	
-	sword1display.scale.setTo(3, 3);
-	sword2display.scale.setTo(3, 3);
+	initdisplay(sword1display);
+	initdisplay(sword2display);
 	
 	shield1display = game.add.sprite(rightside + 74, player1display.y + player1display.height/1.5, "shield");
 	shield2display = game.add.sprite(rightside + 74, player2display.y + player2display.height/1.5, "shield"); 
 	
-	shield1display.scale.setTo(3, 3);
-	shield2display.scale.setTo(3, 3);
+	initdisplay(shield1display);
+	initdisplay(shield2display);
 	
 	displayarray.push(player1display, sword1display, shield1display, player2display, sword2display, shield2display);
+}
+
+let initdisplay = (displayobj) =>{
+	
+	displayobj.scale.setTo(3, 3);
 	
 }
 
@@ -410,16 +415,10 @@ function startthegame(){
 	let ground = platforms.create(gamewidth*2, game.height-40, 'platform');
 	let ground2 = platforms.create(gamewidth, gameheight-40, 'sideplatform');
 	let ground3 = platforms.create(gamewidth*4, gameheight-40, 'sideplatform');
-
-	//scale it to fit the game size
-	ground.scale.setTo(1, 1);
-	ground2.scale.setTo(1, 1);
-	ground3.scale.setTo(1, 1);
-
-	//make it not fall when you jump on it
-	ground.body.immovable = true;
-	ground2.body.immovable = true;
-	ground3.body.immovable = true;
+	
+	initground(ground);
+	initground(ground2);
+	initground(ground3);
 	
 	ground3.scale.x = -1;
 	
@@ -508,6 +507,16 @@ function startthegame(){
 	
 	handlesidepass = decide;
 	gamescene = 0;
+	
+}
+
+let initground = (ground) =>{
+	
+	//scale it to fit the window size
+	ground.scale.setTo(1, 1);
+
+	//make it not fall when you jump on it
+	ground.body.immovable = true;
 	
 }
 
@@ -924,11 +933,9 @@ let addweapontoplayer = (player, otherplayer) =>{
 	
 	if (player.sword === 0){
 		
-		if(hitsword1 && otherplayer.sword !== sword1){
+		if(hitsword1 && otherplayer.sword !== sword1 && sword1.onplayer === 0){
 			handlepickupweapon(player, sword1);
-		}
-		
-		if(hitsword2 && otherplayer.sword !== sword2){
+		}else if(hitsword2 && otherplayer.sword !== sword2 && sword2.onplayer === 0){
 			handlepickupweapon(player, sword2);
 		}	
 		
@@ -936,11 +943,9 @@ let addweapontoplayer = (player, otherplayer) =>{
 	
 	if(player.shield === 0){
 		
-		if(hitshield1 && otherplayer.shield !== shield1){
+		if(hitshield1 && otherplayer.shield !== shield1 && shield1.onplayer === 0){
 			handlepickupweapon(player, shield1);
-		}
-		
-		if(hitshield2 && otherplayer.shield !== shield2){
+		}else if(hitshield2 && otherplayer.shield !== shield2 && shield2.onplayer === 0){
 			handlepickupweapon(player, shield2);
 		}
 		
