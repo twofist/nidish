@@ -622,82 +622,91 @@ let movement = (player) => {
 
 let playermovement = (player, leftkey, rightkey, upkey, downkey, attackkey, blockkey, throwkey) =>{
 	
-	let blockamounttimer;
-	
-	if(throwkey.justPressed() && player.curstate !== normalattack && player.curstate !== airattackdown && player.sword !== 0){
+	switch(player.curstate){
 		
-		throwthesword(player);
+		case dead:
+			break;
+			
+		default:
 		
-	}else if(downkey.isDown && player.body.touching.down && player.curstate !== normalattack){
-		
- 		player.curstate = ducking;
-		
- 	}else if(attackkey.justPressed() && player.body.touching.down && player.sword !== 0 && player.curstate !== normalattack){
-		
- 			player.curstate = normalattack;
-			swordslash.play();
+			let blockamounttimer;
+			
+			if(throwkey.justPressed() && player.curstate !== normalattack && player.curstate !== airattackdown && player.sword !== 0){
+			
+			throwthesword(player);
+			
+			}else if(downkey.isDown && player.body.touching.down && player.curstate !== normalattack){
+				
+				player.curstate = ducking;
+				
+			}else if(attackkey.justPressed() && player.body.touching.down && player.sword !== 0 && player.curstate !== normalattack){
+				
+					player.curstate = normalattack;
+					swordslash.play();
+							
+			}else if((leftkey.isDown && player.curstate !== normalattack) && (player.x-(player.width/2) > game.camera.x || handlesidepass === goleft && canpassleft === player)){
+				
+				player.body.velocity.x = -walkspeed;
+				
+				if(player.curstate !== airattackdown){
+					player.curstate = walking;
+				}
+					switch(player.scale.x){case -playerscalew: player.scale.x = player.scale.x * -1; break; default: }
 					
- 	}else if((leftkey.isDown && player.curstate !== normalattack) && (player.x-(player.width/2) > game.camera.x || handlesidepass === goleft && canpassleft === player)){
-		
- 		player.body.velocity.x = -walkspeed;
-		
- 		if(player.curstate !== airattackdown){
- 			player.curstate = walking;
- 		}
- 			switch(player.scale.x){case -playerscalew: player.scale.x = player.scale.x * -1; break; default: }
-			
- 	}else if((rightkey.isDown && player.curstate !== normalattack) && (player.x-(player.width/2) < game.camera.x+game.camera.width || handlesidepass === goright && canpassright === player)){
-		
- 		player.body.velocity.x = walkspeed;
-		
- 		if(player.curstate !== airattackdown){
-			
- 			player.curstate = walking;
-			
- 		}
- 			switch(player.scale.x){case playerscalew: player.scale.x = player.scale.x * -1; break; default: }
-			
- 	}else if(blockkey.isDown && player.body.touching.down && player.shield !== 0 && player.curstate !== normalattack){
-		
- 		player.blocking = true;
- 		player.curstate = blocking;
-		game.time.events.remove(blockamounttimer);
- 	//}else if(player.body.touching.down && player.curstate !== normalattack){
- 	//	player.curstate = exhaustedidle;
+			}else if((rightkey.isDown && player.curstate !== normalattack) && (player.x-(player.width/2) < game.camera.x+game.camera.width || handlesidepass === goright && canpassright === player)){
+				
+				player.body.velocity.x = walkspeed;
+				
+				if(player.curstate !== airattackdown){
+					
+					player.curstate = walking;
+					
+				}
+					switch(player.scale.x){case playerscalew: player.scale.x = player.scale.x * -1; break; default: }
+					
+			}else if(blockkey.isDown && player.body.touching.down && player.shield !== 0 && player.curstate !== normalattack){
+				
+				player.blocking = true;
+				player.curstate = blocking;
+				game.time.events.remove(blockamounttimer);
+			//}else if(player.body.touching.down && player.curstate !== normalattack){
+			//	player.curstate = exhaustedidle;
+
+			}else if(player.body.touching.down && player.curstate !== normalattack){
+				
+				player.curstate = idle;	
+				
+			}
+
+			if(attackkey.justPressed() && !player.body.touching.down && player.sword !== 0 && player.curstate !== airattackdown){
+				
+				player.curstate = airattackdown
+				swordslash.play();
+				
+			}else if(player.body.velocity.y > 0 && !player.body.touching.down && player.curstate !== airattackdown){
+				
+				player.curstate = falling;
+				
+			}else if(player.body.velocity.y < 0 && !player.body.touching.down && player.curstate !== airattackdown){
+				
+				player.curstate = jumping;
+				
+			}
+
+			if(player.shield === 0 || player.curstate !== blocking){
+				
+				player.blocking = false;
+				blockamounttimer = game.time.events.add(500, resetblockamount, this, player);
+				
+			}
+
+			if(upkey.isDown && player.body.touching.down && player.curstate !== normalattack && player.curstate !== airattackdown){
+				
+				player.body.velocity.y = -jumpvelocity;
+				
+			}	
 	
- 	}else if(player.body.touching.down && player.curstate !== normalattack){
-		
- 		player.curstate = idle;	
-		
 	}
-	
-	if(attackkey.justPressed() && !player.body.touching.down && player.sword !== 0 && player.curstate !== airattackdown){
-		
-		player.curstate = airattackdown
-		swordslash.play();
-		
-	}else if(player.body.velocity.y > 0 && !player.body.touching.down && player.curstate !== airattackdown){
-		
-		player.curstate = falling;
-		
-	}else if(player.body.velocity.y < 0 && !player.body.touching.down && player.curstate !== airattackdown){
-		
-		player.curstate = jumping;
-		
-	}
-	
-	if(player.shield === 0 || player.curstate !== blocking){
-		
-		player.blocking = false;
-		blockamounttimer = game.time.events.add(500, resetblockamount, this, player);
-		
-	}
-	
-	if(upkey.isDown && player.body.touching.down && player.curstate !== normalattack && player.curstate !== airattackdown){
-		
-		player.body.velocity.y = -jumpvelocity;
-		
-	}	
 	
 }
 
@@ -1954,6 +1963,7 @@ let addplayerstats = (player) =>{
 		
 		player.curhp = maximumhp;
 		
+		player.curstate = falling;
 	}
 	
 	//animations
