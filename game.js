@@ -93,6 +93,7 @@
 	let loadingstart = () =>{
 		
 		game.load.image('sideplatform', 'images/background/side/sideplatform.png');
+		game.load.image('endplatform', 'images/background/end/endplatform.png');
 		game.load.image("sword", "images/sword1.png");
 		game.load.image("shield", "images/shield2.png");
 		
@@ -101,6 +102,7 @@
 		game.load.spritesheet('arrowstuff', 'images/arrow/arrowstuff.png', 32, 32);
 		game.load.spritesheet('middlebackground', 'images/background/middle/middlebackground.png', 720, 480);
 		game.load.spritesheet('sidebackground', 'images/background/side/sidebackground.png', 720, 480);
+		game.load.spritesheet('endbackground', 'images/background/end/endbackground.png', 720, 480);
 		
 		game.load.audio('slash', 'sounds/swordslash.mp3');
 		game.load.audio('pickup', 'sounds/swordpickup.mp3');
@@ -390,7 +392,7 @@
 
 	}
 
-	let background, sidebackground;
+	let background, sidebackground, endbackground;
 
 	function startthegame(){
 
@@ -407,6 +409,9 @@
 		sidebackground = backgrounds.create(gamewidth, 0, 'sidebackground');
 		sidebackground.animations.add('sidebackground', [0, 1, 2, 3, 4, 5, 6, 7, 8], 8, true);
 		
+		endbackground = backgrounds.create(0, 0, 'endbackground');
+		endbackground.animations.add('endbackground', [0,1,2,3,4,5,6], 2, true);
+		
 		//make platforms a group
 		platforms = game.add.group();
 		//enable physics for every object in the group
@@ -416,12 +421,17 @@
 		let ground = platforms.create(gamewidth*2, game.height-40, 'platform');
 		let ground2 = platforms.create(gamewidth, gameheight-40, 'sideplatform');
 		let ground3 = platforms.create(gamewidth*4, gameheight-40, 'sideplatform');
+		let ground4 = platforms.create(0, gameheight-40, 'endplatform');
+		let ground5 = platforms.create(gamewidth*5, gameheight-40, 'endplatform');
 		
 		initground(ground);
 		initground(ground2);
 		initground(ground3);
+		initground(ground4);
+		initground(ground5);
 		
 		ground3.scale.x = -1;
+		ground5.scale.x = -1;
 		
 		//set camera
 		game.camera.x = (game.world.width/2) - (game.width/2);
@@ -562,13 +572,13 @@
 
 	let checkforwin = ()=>{
 		
-		if(player2.x < game.world.width && player2.x > game.world.width - 50){
+		if(player2.x < game.world.width && player2.x > game.world.width - 50 && handlesidepass === godown){
 			gamestate = win;
 			whowon = "player2";
 			winscreen();
 		}
 		
-		if(player1.x > 0 && player1.x < 50){
+		if(player1.x > 0 && player1.x < 50 && handlesidepass === godown){
 			gamestate = win;
 			whowon = "player1";
 			winscreen();
@@ -578,6 +588,7 @@
 
 	function winscreen(){
 		
+		backgrounds.destroy();
 		platforms.destroy();
 		player1.destroy();
 		player2.destroy();
@@ -768,7 +779,7 @@
 
 	let updatebars = (player) => {
 
-		if(gamescene === 2 || gamescene === -2){
+		if(gamescene === 2 && handlesidepass !== goleft || gamescene === -2 && handlesidepass !== goright){
 			handlesidepass = godown;
 		}
 		
@@ -780,6 +791,8 @@
 				handlesidepass = goright;
 			}else if(player === player2 && gamescene !== -2){
 				handlesidepass = goleft;
+			}else if(gamescene === 2 || gamescene === -2){
+				handlesidepass = godown;
 			}
 			
 		}
@@ -1882,6 +1895,9 @@
 		
 		switch(game.camera.x){
 			case 0: 			gamescene = -2;
+								endbackground.x = 0;
+								endbackground.scale.x = 1;
+								endbackground.animations.play('endbackground');
 				break;
 			case gamewidth: 	gamescene = -1;
 								sidebackground.x = gamewidth;
@@ -1897,6 +1913,9 @@
 								sidebackground.animations.play('sidebackground');
 				break;
 			case gamewidth*4: 	gamescene = 2;
+								endbackground.x = gamewidth*5;
+								endbackground.scale.x = -1;
+								endbackground.animations.play('endbackground');
 				break;
 			default:
 		}
@@ -1922,10 +1941,15 @@
 							arrowstuff.frame = 1;
 							arrowstuff.x = game.camera.x;
 				break;
-			case godown:	arrowstuff.frame = 3
+			case godown:	arrowstuff.frame = 3;
+							if(gamescene === -2){
+								arrowstuff.x = game.camera.x;
+							}else if(gamescene === 2){
+								arrowstuff.x = game.camera.x + game.camera.width - arrowstuff.width;
+							}
 				break;
 			default:
-		}
+		}		
 		
 	}
 
