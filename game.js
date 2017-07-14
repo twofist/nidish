@@ -96,6 +96,9 @@
 		game.load.image('endplatform', 'images/background/end/endplatform.png');
 		game.load.image("sword", "images/sword1.png");
 		game.load.image("shield", "images/shield2.png");
+		game.load.image("winwell","images/obstacles/winwell.png");
+		game.load.image("sidecave","images/obstacles/sidecave.png");
+		game.load.image("houseoutside","images/obstacles/houseoutside.png");
 		
 		game.load.spritesheet("nyan", "images/menuanimation/nyan.png", 100, 30);
 		game.load.spritesheet('player', 'images/player.png', spritesizew, spritesizeh);
@@ -392,7 +395,7 @@
 
 	}
 
-	let background, sidebackground, endbackground;
+	let background, sidebackground, endbackground, winwell, sidecave, houseoutside;
 
 	function startthegame(){
 
@@ -424,11 +427,16 @@
 		let ground4 = platforms.create(0, gameheight-40, 'endplatform');
 		let ground5 = platforms.create(gamewidth*5, gameheight-40, 'endplatform');
 		
+		let winwell = platforms.create(0,game.height-75, 'winwell');
+		let sidecave = platforms.create(gamewidth+gamewidth/3+20,20, 'sidecave');
+		
 		initground(ground);
 		initground(ground2);
 		initground(ground3);
 		initground(ground4);
 		initground(ground5);
+		initground(winwell);
+		initground(sidecave);
 		
 		ground3.scale.x = -1;
 		ground5.scale.x = -1;
