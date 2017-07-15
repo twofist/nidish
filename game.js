@@ -395,7 +395,7 @@
 
 	}
 
-	let background, sidebackground, endbackground, winwell, sidecave, houseoutside;
+	let outsidehouse, outsidehouse2, background, sidebackground, endbackground;
 
 	function startthegame(){
 
@@ -403,7 +403,7 @@
 
 		//enable physics system
 		game.physics.startSystem(Phaser.Physics.ARCADE);
-
+		
 		backgrounds = game.add.group();
 		
 		background = backgrounds.create(gamewidth*2, 0, 'middlebackground');
@@ -427,16 +427,19 @@
 		let ground4 = platforms.create(0, gameheight-40, 'endplatform');
 		let ground5 = platforms.create(gamewidth*5, gameheight-40, 'endplatform');
 		
-		let winwell = platforms.create(0,game.height-75, 'winwell');
-		let sidecave = platforms.create(gamewidth+gamewidth/3+20,20, 'sidecave');
+		let winwell = platforms.create(0,game.height-71, 'winwell');
+		let winwell2 = platforms.create(gamewidth*5-winwell.width, gameheight-winwell.height, 'winwell')
+		//let sidecave = platforms.create(gamewidth+gamewidth/3+20,20, 'sidecave');
 		
-		initground(ground);
-		initground(ground2);
-		initground(ground3);
-		initground(ground4);
-		initground(ground5);
-		initground(winwell);
-		initground(sidecave);
+		platforms.forEach(function(ground){
+			
+			//scale it to fit the window size
+			ground.scale.setTo(1, 1);
+
+			//make it not fall when you jump on it
+			ground.body.immovable = true;
+			
+		});
 		
 		ground3.scale.x = -1;
 		ground5.scale.x = -1;
@@ -478,10 +481,13 @@
 		shield2 = shields.create(leftside - 25, 0, "shield");
 		shield2.tint = displayarray[5].tint;
 
-			addweaponstats(shield1);
-			addweaponstats(shield2);
-			addweaponstats(sword1);
-			addweaponstats(sword2);
+		swords.forEach(function(weapon){
+			addweaponstats(weapon);
+		});
+		
+		shields.forEach(function(weapon){
+			addweaponstats(weapon);
+		});
 			
 		cursors = game.input.keyboard.createCursorKeys();
 		
@@ -524,18 +530,14 @@
 		let style = { font: "24px Arial", fill: "#fff" };
 		text = game.add.text(game.camera.x, 0, "FPS: " +game.time.fps, style);
 		
+		outsidehouse = game.add.sprite(180, game.height-138-30, 'houseoutside');
+		outsidehouse2 = game.add.sprite(gamewidth*5-180, game.height-outsidehouse.height-30, 'houseoutside');
+		game.world.bringToTop(outsidehouse);
+		outsidehouse2.scale.x = -1;
+		game.world.bringToTop(outsidehouse2);
+		
 		handlesidepass = decide;
 		gamescene = 0;
-		
-	}
-
-	let initground = (ground) =>{
-		
-		//scale it to fit the window size
-		ground.scale.setTo(1, 1);
-
-		//make it not fall when you jump on it
-		ground.body.immovable = true;
 		
 	}
 
@@ -592,6 +594,24 @@
 			winscreen();
 		}
 		
+		if(checkinhouse(player1) || checkinhouse(player2)){
+			outsidehouse.alpha -= 0.1;
+			outsidehouse2.alpha -= 0.1;
+		}else{
+			outsidehouse.alpha = 1;
+			outsidehouse2.alpha = 1;
+		}
+		
+	}
+	
+	let checkinhouse = (player) => {
+		
+		if(player.x >= outsidehouse.x && player.x <= outsidehouse.x+outsidehouse.width || player.x <= outsidehouse2.x && player.x >= outsidehouse2.x-outsidehouse.width){
+			return true;
+		}
+		
+		return false;
+		
 	}
 
 	function winscreen(){
@@ -604,6 +624,8 @@
 		shields.destroy();
 		arrowstuff.destroy();
 		text.destroy();
+		outsidehouse.destroy();
+		outsidehouse2.destroy();
 		
 		game.world.setBounds(0, 0, gamewidth, gameheight);
 		
