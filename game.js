@@ -459,7 +459,7 @@
         platforms.enableBody = true;
 
         //create ground
-        let ground = platforms.create(gamewidth * 2, game.height - 40, 'platform');
+        let ground1 = platforms.create(gamewidth * 2, game.height - 40, 'platform');
         let ground2 = platforms.create(gamewidth, gameheight - 40, 'sideplatform');
         let ground3 = platforms.create(gamewidth * 4, gameheight - 40, 'sideplatform');
         let ground4 = platforms.create(0, gameheight - 40, 'endplatform');
@@ -469,9 +469,9 @@
         let winwell2 = platforms.create(gamewidth * 5 - winwell.width, gameheight - winwell.height, 'winwell')
         //let sidecave = platforms.create(gamewidth+gamewidth/3+20,20, 'sidecave');
 
-        for(let ii = 0; ii < platforms.length; ii++){
-            let ground = platforms[ii]
-            //scale it to fit the window size
+        for(let ii = 0; ii < platforms.children.length; ii++){
+            let ground = platforms.children[ii];
+			//scale it to fit the window size
             ground.scale.setTo(1, 1);
 
             //make it not fall when you jump on it
@@ -518,12 +518,12 @@
         shield2 = shields.create(leftside - 25, 0, "shield");
         shield2.tint = displayarray[5].tint;
 
-        for(let ii = 0; ii < swords.length; ii++){
-            addweaponstats(swords[ii]);
+        for(let ii = 0; ii < swords.children.length; ii++){
+            addweaponstats(swords.children[ii]);
         }
 
         for(let ii = 0; ii < shields.length; ii++){
-            addweaponstats(shields[ii]);
+            addweaponstats(shields.children[ii]);
         }
 
         cursors = game.input.keyboard.createCursorKeys();
