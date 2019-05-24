@@ -2,7 +2,7 @@
 nidish game
 
  
-### try it here https://twofist.github.io/nidish/
+### try it here https://twofist.github.io/Nidish/
 
 ## how to play    
 1. ### player 1    
